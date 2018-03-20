@@ -23,7 +23,8 @@ if($_POST)
 
 	$query = "CREATE TABLE ". $user_table ." (
 		id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-		email VARCHAR(50),
+		user_email VARCHAR(50),
+		user_password VARCHAR(255),
 		reg_date 	DATETIME
 	)";
 	
