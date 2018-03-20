@@ -1,0 +1,20 @@
+config.php
+// change to your base url
+$config['base_url'] = 'http://localhost:31337/AceCIUser';
+
+
+database.php
+// change to your own database and user
+
+'hostname' => 'localhost:3306',
+'username' => 'johnuser',
+'password' => '123',
+'database' => 'aceciuser'
+
+
+
+CREATE TABLE MyGuests (
+	id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+	email VARCHAR(50),
+	reg_date 	DATETIME
+)
