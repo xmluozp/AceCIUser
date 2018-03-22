@@ -103,6 +103,7 @@
 	{
 		$returnValue = 0;
 		$tokenString = NULL;
+		$tokenKey = NULL;
 
 		$ci =& get_instance();
 		$ci->load->model("users_model");
