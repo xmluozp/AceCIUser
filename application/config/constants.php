@@ -83,3 +83,12 @@ defined('EXIT_USER_INPUT')     OR define('EXIT_USER_INPUT', 7); // invalid user 
 defined('EXIT_DATABASE')       OR define('EXIT_DATABASE', 8); // database error
 defined('EXIT__AUTO_MIN')      OR define('EXIT__AUTO_MIN', 9); // lowest automatically-assigned error code
 defined('EXIT__AUTO_MAX')      OR define('EXIT__AUTO_MAX', 125); // highest automatically-assigned error code
+
+
+defined('VISITOR')      OR define('VISITOR', 0);
+defined('NORMAL_USER')      OR define('NORMAL_USER', 1);
+defined('ADMINISTRATOR')      OR define('ADMINISTRATOR', 2);
+
+
+defined('LOGIN_REDIRECTION')      OR define('LOGIN_REDIRECTION', 'users/view_login_success');
+

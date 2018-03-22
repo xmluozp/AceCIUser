@@ -1,0 +1,313 @@
+body{
+
+}
+.material-icons
+{
+	color: #868e96;
+	vertical-align: middle;
+	margin-top: -2px;
+}
+.btn-primary i.material-icons
+{
+	color: white;
+}
+
+.btn-light i.material-icons
+{
+	color: gray;
+}
+.ico_check{
+	color: #00CC00;
+}
+
+.ico_block{
+	color: darkred;
+}
+
+.btn-warning i.material-icons{
+	color: white;
+	padding-right: 5px;
+	font-size: 20px;
+}
+
+.ico_cache_read{
+	color: #bbbbbb;
+}
+.ico_cache_read:hover{
+	color: #17a2b8;
+}
+
+
+.ico_done{
+	color: #17a640;
+}
+
+.ico_highlight_off{
+	color: #DF382C;
+}
+
+.ico_help_outline{
+	color: #bbbbbb;
+}
+
+
+
+
+.edit_column{
+	text-align: right;
+}
+.edit_column i{
+	padding: 5px;
+	cursor: pointer;
+	color: #868e96 !important;
+	transition: 0.1s ease-out;
+	text-shadow: 1px 1px #EEE;
+	font-size: 25px;
+}
+.edit_column i:hover
+{
+	transition: 0.1s ease-in;
+	color: #E95420 !important;
+	font-size: 35px;
+	padding: 0px 0px;
+}
+
+
+
+/*================above all icon styles=================*/
+
+.page-heading{
+	z-index: 500;
+}
+
+/*================above all z-indexes=================*/
+
+.btn_active{
+	cursor: pointer;
+}
+
+/* make Datatable's filter tidy*/
+.dataTables_wrapper .dataTables_filter input {
+	margin-left: 0;
+}
+.navbar-dark .navbar-nav .nav-link, .navbar-dark .navbar-text{
+	color: rgba(255, 255, 255, 0.8);
+}
+
+/* the advanced search panel*/
+.search-panel{
+	width: 500px;
+}
+
+.select2-container .select2-selection--single {
+	padding: .475rem ;
+	height: 36px;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+	line-height:normal;
+}
+.select2-container .select2-selection--single .select2-selection__rendered {
+	padding-left: 0px;
+	padding-right: 0px;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+	top: 5px;
+}
+
+.select-inline {
+	display: inline-block;
+	padding: 0.375rem 0.75rem;
+	font-size: 1rem;
+	line-height: 1.5;
+	color: #495057;
+	background-color: #fff;
+	background-clip: padding-box;
+	border: 1px solid #ced4da;
+	border-radius: 0.25rem;
+	-webkit-transition: border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
+	transition: border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
+	transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+	transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
+}
+
+option:disabled{
+	background-color: #e9ecef;
+	opacity: 1;
+}
+
+	/**/
+.page-heading{
+	padding-top: 10px;
+	padding-bottom: 10px;
+	height: 60px;
+	border-bottom: 1px solid #999;
+	/*background-color: #f0f5f9;*/
+	margin-bottom: 20px;
+}
+
+/**/
+.page-title{
+
+}
+
+/* style of tool bar on top-right*/
+.tool-bar{
+	text-align: right;
+}
+
+input:-webkit-autofill {
+	-webkit-box-shadow: 0 0 0 1000px #fbf3d5 inset !important;
+}
+
+/* rotating */
+@-webkit-keyframes rotating /* Safari and Chrome */ {
+	to {
+		-webkit-transform: rotate(0deg);
+		-o-transform: rotate(0deg);
+		transform: rotate(0deg);
+	}
+	from {
+		-webkit-transform: rotate(360deg);
+		-o-transform: rotate(360deg);
+		transform: rotate(360deg);
+	}
+}
+@keyframes rotating {
+	to {
+		-ms-transform: rotate(0deg);
+		-moz-transform: rotate(0deg);
+		-webkit-transform: rotate(0deg);
+		-o-transform: rotate(0deg);
+		transform: rotate(0deg);
+	}
+	from {
+		-ms-transform: rotate(360deg);
+		-moz-transform: rotate(360deg);
+		-webkit-transform: rotate(360deg);
+		-o-transform: rotate(360deg);
+		transform: rotate(360deg);
+	}
+}
+.rotating {
+	-webkit-animation: rotating .5s linear infinite;
+	-moz-animation: rotating .5s linear infinite;
+	-ms-animation: rotating .5s linear infinite;
+	-o-animation: rotating .5s linear infinite;
+	animation: rotating .5s linear infinite;
+}
+
+/* rotating */
+@-webkit-keyframes rotating_hover /* Safari and Chrome */ {
+	to {
+		-webkit-transform: rotate(0deg);
+		-o-transform: rotate(0deg);
+		transform: rotate(0deg);
+	}
+	from {
+		-webkit-transform: rotate(360deg);
+		-o-transform: rotate(360deg);
+		transform: rotate(360deg);
+	}
+}
+@keyframes rotating_hover {
+	to {
+		-ms-transform: rotate(0deg);
+		-moz-transform: rotate(0deg);
+		-webkit-transform: rotate(0deg);
+		-o-transform: rotate(0deg);
+		transform: rotate(0deg);
+	}
+	from {
+		-ms-transform: rotate(360deg);
+		-moz-transform: rotate(360deg);
+		-webkit-transform: rotate(360deg);
+		-o-transform: rotate(360deg);
+		transform: rotate(360deg);
+	}
+}
+.rotating_hover:hover {
+	-webkit-animation: rotating .5s linear infinite;
+	-moz-animation: rotating .5s linear infinite;
+	-ms-animation: rotating .5s linear infinite;
+	-o-animation: rotating .5s linear infinite;
+	animation: rotating .5s linear infinite;
+}
+
+/* the button within the Datepicker: from when to when*/
+.input-daterange .input-group-addon
+{
+	width: auto;
+	min-width: 16px;
+	padding: 4px 15px;
+	line-height: 1.42857143;
+	text-shadow: 0 1px 0 #fff;
+	border-width: 1px 0;
+	margin-left: -5px;
+	margin-right: -5px;
+}
+
+/*button group of advanced search*/
+#advanced_search{ /*fixing the original bootstrap style*/
+	padding: 1rem !important;
+	margin-bottom: 0px;
+}
+.search-panel{padding: 0px; margin: 0px;}
+.form-group_advanced_search
+{
+	text-align: right;
+	border-top: 1px solid #e9ecef;
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-align: center;
+	-ms-flex-align: center;
+	align-items: center;
+	-webkit-box-pack: end;
+	-ms-flex-pack: end;
+	justify-content: flex-end;
+	padding: 1rem;
+
+}
+.form-group_advanced_search #button_refresh
+{
+	margin-left: 5px;
+}
+
+.modal-content .nav
+{
+	padding-left: 10px;
+	padding-top: 10px;
+	background-color: #F5F5F5;
+}
+.nav-link{
+	color: #555;}
+
+.navError{
+	color: #DF382C !important;
+	font-weight: bold;
+}
+
+.navValid{
+	color: #00CC00 !important;
+}
+.navValid:after {
+	content: ' (\2713)';
+}
+
+.anchor_toolbar{
+	display: inline-block;
+}
+.anchor_toolbar .dropdown-item
+{
+	line-height: 30px;
+}
+
+.edit_column {
+	-webkit-user-select: none;  /* Chrome all / Safari all */
+	-moz-user-select: none;     /* Firefox all */
+	-ms-user-select: none;      /* IE 10+ */
+	user-select: none;          /* Likely future */
+}
+.anchor_form_link{
+	padding-left: 10px;
+}

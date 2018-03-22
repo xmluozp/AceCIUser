@@ -18,23 +18,57 @@ if($_POST)
 		$db = new PDO(DB_DSN, DB_USER, DB_PASS);
 	} catch (PDOException $e) {
 		print "Error: " . $e->getMessage();
-		die(); // Force execution to stop on errors.
-	} 
-
+		die();
+	}
+	
+	$query = "DROP TABLE ".$user_table .";";
+	$query .= "DROP TABLE ".$role_table. ";";
+	$statement = $db->prepare($query);
+	$statement->execute();			
+	
+	// user_token: generated after login, used to decode the token
+	// user_token_key: used to match the token from client side
+	
+	
+	/* 
+	user status:
+	0: inactive
+	1: active
+	2: reset password
+	*/
 	$query = "CREATE TABLE ". $user_table ." (
-		id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-		user_email VARCHAR(50),
-		user_password VARCHAR(255),
-		reg_date 	DATETIME
-	)";
+		user_id 		INT(11)	AUTO_INCREMENT PRIMARY KEY,
+		user_email		VARCHAR(50) NOT NULL,
+		user_password	VARCHAR(255),
+		user_created 	DATETIME DEFAULT CURRENT_TIMESTAMP,
+		user_active		BOOLEAN  DEFAULT 1,
+		user_active_code VARCHAR(12),
+		user_group_id	INT(11) DEFAULT 1,
+		organization_id	INT(11) DEFAULT 0,
+		user_last_login DATETIME DEFAULT CURRENT_TIMESTAMP,
+		user_token		VARCHAR(350), 
+		user_token_key	VARCHAR(350), 
+		user_token_reset_password	VARCHAR(350),
+		is_deleted		BOOLEAN DEFAULT 0
+	);";
+	
+	$query .= "CREATE TABLE ". $role_table ." (
+		user_group_id 		INT(11)	PRIMARY KEY,
+		user_group_name		VARCHAR(50),
+		user_group_level	INT(11)
+	);";
+	
+	// insert the super admin user
+	$query .=  "INSERT INTO " . $user_table."(user_email, user_password, user_group_id) VALUES('administrator@aceciuser.none', '', 2);";
+	$query .=  "INSERT INTO ".$role_table. "(user_group_id, user_group_name,user_group_level) VALUES(0, 'Visitor', 0);";
+	$query .=  "INSERT INTO ".$role_table. "(user_group_id, user_group_name,user_group_level) VALUES(1, 'Normal User', 1);";
+	$query .=  "INSERT INTO ".$role_table. "(user_group_id, user_group_name,user_group_level) VALUES(2, 'Administrator', 2);";
+
+
 	
 	$statement = $db->prepare($query);
-
-	$statement->execute();
-	
+	$statement->execute();		
 }
-
-
 
 ?>
 <!doctype html>
