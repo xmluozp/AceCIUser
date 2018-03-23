@@ -260,7 +260,7 @@
 
 		if(!$user_id)
 		{
-			$userGroupId = GUEST;
+			$userGroupId = VISITOR;
 		}
 		else
 		{

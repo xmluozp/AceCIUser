@@ -151,7 +151,9 @@ class Users_model extends CI_Model {
 
 		$db->select('user_email');
 		$db->select('user_id');
+		$db->select('organization_id');
 		$db->select('user_groups.user_group_name AS user_group_name');
+		
 
 		$query = $db->get();
 

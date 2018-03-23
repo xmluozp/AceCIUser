@@ -99,14 +99,29 @@ class Users extends CI_Controller {
 		$user_password = $this->input->post('user_password');
 		$remember_me =  $this->input->post('remember_me');
 
+		// 3 attemptings
+		if(!isset($_SESSION['login_attempting']))
+		{
+			$_SESSION['login_attempting'] = 0;
+		}
+		$isShowCaptcha = $_SESSION['login_attempting'] >= 3;
+
 		// validation
 		$v_data['user_email'] = $user_email;
 		$v_data['user_password'] = $user_password;
-
-		$this->form_validation->set_data($v_data);
+	
 		$this->form_validation->set_rules('user_email', 'email', 'trim|required|valid_email');
 		$this->form_validation->set_rules('user_password', 'password', 'required|trim');
-
+		
+		if($isShowCaptcha)
+		{
+			$v_data['captcha'] = $this->input->post('captcha');
+			$this->form_validation->set_rules('captcha', 'captcha', 'required|callback_validate_captcha');
+			$this->form_validation->set_message('validate_captcha', "Wrong Captcha  ". $_SESSION["captcha"]);
+		}
+		
+		$this->form_validation->set_data($v_data);
+		
 		$validation_result = func_run_with_ajax($this->form_validation);
 	
 		if ($validation_result["success"] === FALSE)
@@ -121,12 +136,14 @@ class Users extends CI_Controller {
 			$user_id = sign_auth($user_email, $user_password, !empty($remember_me));
 
 			if($user_id)
-			{
+			{		
+				$_SESSION['login_attempting'] = 0;
 				redirect('/'. LOGIN_REDIRECTION);
 			}
 			else
 			{
-				$this->view_login(rawurlencode("Wrong username or password."));
+				if($_SESSION['login_attempting'] < 3){$_SESSION['login_attempting'] += 1;}
+				$this->view_login(rawurlencode("Wrong username or password. Attemptings: " . $_SESSION['login_attempting']));
 			}
 		}
 	}
@@ -756,6 +773,10 @@ class Users extends CI_Controller {
 	public function validate_match_password($str)
 	{
 		return $this->input->post('user_password') == $this->input->post('user_confirm');
+	}
+	
+	public function validate_captcha($str){
+		return $this->session->userdata("captcha") == $str;
 	}
 	
 	/*

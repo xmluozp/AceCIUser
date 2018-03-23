@@ -43,7 +43,20 @@
 					<input type="checkbox" class="form-check-input" id="remember_me" name="remember_me" value="1">
 					<label class="form-check-label" for="remember_me" style="cursor: pointer;">Remember Me</label>
 				</div>
+			<?php if($this->session->userdata('login_attempting')>=3):?>
+			<div class="form-group">
 
+					<div class="alert alert-warning" role="alert">
+						Please enter the Captcha code, or - <a href="<?php echo site_url('users/view_forgot');?>">Forgot You Password</a>?
+					</div>
+
+				<img class="form-control" src="<?=base_url("assets/captcha.php")?>" id="captcha" onclick="
+					document.getElementById('captcha').src='<?=base_url("assets/captcha.php")?>?'+Math.random();"
+				style="cursor: pointer;"/>
+				<input type="text" class="form-control" data-validation autocomplete="off" name="captcha"
+					   id="captcha" placeholder="Enter the text here" style="background: rgba(255, 255, 200, 0.8);">
+			</div>
+			<?php endif?>
 		</div>
 
 		<div class="form-group" style="text-align: center; padding-left: 15px; padding-right:15px;">

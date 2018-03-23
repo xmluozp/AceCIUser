@@ -69,8 +69,8 @@ class UserAuth {
 		$ifLockedForResetPassword = $ci->users_model->exists(array('user_id'=> get_user_id(), 'user_active' => 0));
 
 		if($ifLockedForResetPassword){
-			$user_group_id = GUEST;
-			$user_group_level = GUEST;
+			$user_group_id = VISITOR;
+			$user_group_level = VISITOR;
 		}
 
 		// have className, means not public function, need to be checked

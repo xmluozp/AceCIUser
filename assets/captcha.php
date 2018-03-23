@@ -1,6 +1,6 @@
 <?php
 /**
- * Script para la generación de CAPTCHAS
+ * Script para la generaciï¿½n de CAPTCHAS
  *
  * @author  Jose Rodriguez <josecl@gmail.com>
  * @license GPLv3
@@ -17,6 +17,7 @@ $CI =& get_instance();
 $CI->load->library('session');
 
 $captcha = new SimpleCaptcha();
+
 // OPTIONAL Change configuration...
 //$captcha->wordsFile = 'words/es.php';
 //$captcha->session_var = 'secretword';
@@ -44,31 +45,6 @@ $captcha->CreateImage();
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /**
  * SimpleCaptcha class
  *
@@ -82,13 +58,13 @@ class SimpleCaptcha {
      * closer to 2 is more hard, for ex: 1.8
      * smaller then 0 and bigger than 2 is caped to min or max
      */
-    public $difficulty = 1;
+    public $difficulty = .5;
 
     /** Width of the image */
-    public $width  = 200;
+    public $width  = 530;
 
     /** Height of the image */
-    public $height = 70;
+    public $height = 100;
 
     /** Dictionary word file (empty for random text) */
     public $wordsFile = 'words/en.php';
@@ -103,7 +79,7 @@ class SimpleCaptcha {
     public $resourcesPath = 'resources';
 
     /** Min word length (for non-dictionary random text generation) */
-    public $minWordLength = 5;
+    public $minWordLength = 15;
 
     /**
      * Max word length (for non-dictionary random text generation)
@@ -111,7 +87,7 @@ class SimpleCaptcha {
      * Used for dictionary words indicating the word-length
      * for font-size modification purposes
      */
-    public $maxWordLength = 8;
+    public $maxWordLength = 15;
 
     /** Sessionname to store the original text */
     public $session_var = 'captcha';
@@ -127,10 +103,10 @@ class SimpleCaptcha {
     );
 
     /** Shadow color in RGB-array or null */
-    public $shadowColor = null; //array(0, 0, 0);
+    public $shadowColor = array(0, 0, 0); //array(0, 0, 0);
 
     /** Horizontal line through the text */
-    public $lineWidth = 0;
+    public $lineWidth = 5;
 
     /**
      * Font configuration
@@ -165,40 +141,27 @@ class SimpleCaptcha {
      * Internal image size factor (for better image quality)
      * 1: low, 2: medium, 3: high
      */
-    public $scale = 2;
+    public $scale = 3;
 
     /** 
      * Blur effect for better image quality (but slower image processing).
      * Better image results with scale=3
      */
-    public $blur = false;
+    public $blur = 3;
 
     /** Debug? */
     public $debug = false;
     
     /** Image format: jpeg or png */
-    public $imageFormat = 'jpeg';
+    public $imageFormat = 'png';
 
 
     /** GD image */
     public $im;
 
 
-
-
-
-
-
-
-
-
     public function __construct($config = array()) {
     }
-
-
-
-
-
 
 
     public function CreateImage() {
@@ -260,32 +223,33 @@ class SimpleCaptcha {
         }
 
         $this->im = imagecreatetruecolor($this->width*$this->scale, $this->height*$this->scale);
+		imagealphablending($this->im, true);
 
-        // Background color
-        $this->GdBgColor = imagecolorallocate($this->im,
+		// Background color
+        $this->GdBgColor = imagecolorallocatealpha($this->im,
             $this->backgroundColor[0],
             $this->backgroundColor[1],
-            $this->backgroundColor[2]
+            $this->backgroundColor[2],
+			80
         );
-        imagefilledrectangle($this->im, 0, 0, $this->width*$this->scale, $this->height*$this->scale, $this->GdBgColor);
+		imagefill($this->im, 0, 0, $this->GdBgColor);
+        //imagefilledrectangle($this->im, 0, 0, $this->width*$this->scale, $this->height*$this->scale, $this->GdBgColor);
 
-        // Foreground color
+		// Foreground color
         $color           = $this->colors[mt_rand(0, sizeof($this->colors)-1)];
-        $this->GdFgColor = imagecolorallocate($this->im, $color[0], $color[1], $color[2]);
+        $this->GdFgColor = imagecolorallocatealpha($this->im, $color[0], $color[1], $color[2], 255);
 
         // Shadow color
         if (!empty($this->shadowColor) && is_array($this->shadowColor) && sizeof($this->shadowColor) >= 3) {
-            $this->GdShadowColor = imagecolorallocate($this->im,
+            $this->GdShadowColor = imagecolorallocatealpha($this->im,
                 $this->shadowColor[0],
                 $this->shadowColor[1],
-                $this->shadowColor[2]
+                $this->shadowColor[2],
+			255
             );
         }
-    }
-
-
-
-
+		imagefill($this->im, 0, 0, $this->GdBgColor);
+	}
 
     /**
      * Text generation
@@ -492,7 +456,7 @@ class SimpleCaptcha {
      * Reduce the image to the final size
      */
     protected function ReduceImage() {
-        // Reduzco el tamaño de la imagen
+        // Reduzco el tamaï¿½o de la imagen
         $imResampled = imagecreatetruecolor($this->width, $this->height);
         imagecopyresampled($imResampled, $this->im,
             0, 0, 0, 0,
