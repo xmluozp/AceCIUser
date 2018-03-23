@@ -38,17 +38,6 @@
 
 			<div class="form-row">
 				<div class="form-group col-md-6">
-					<label for="userDetailForm-user_first_name">First Name</label>
-					<input data-validation type="text" class="form-control" name="user_first_name" id="userDetailForm-user_first_name" placeholder="First Name" autocomplete="off" value="">
-				</div>
-				<div class="form-group col-md-6">
-					<label for="userDetailForm-user_last_name">Last Name</label>
-					<input data-validation type="text" class="form-control" name="user_last_name" id="userDetailForm-user_last_name" placeholder="Last Name" autocomplete="off" value="">
-				</div>
-			</div>
-
-			<div class="form-row">
-				<div class="form-group col-md-6">
 					<label for="userDetailForm-user_created">Created Time</label>
 					<input type="text" readonly class="form-control date_format" name="user_created" id="userDetailForm-user_created" placeholder="" autocomplete="off" value="">
 				</div>
@@ -117,18 +106,6 @@
 
 					<div class="form-group col-0" style=" width: 40px; padding-top: 40px; margin-left: -40px; z-index: 2000" id="button_generateRandomPassword">
 						<i class="ico_cache_read material-icons rotating_hover" style=" display: inline-block;cursor: pointer;" title="Random Password">cached</i>
-					</div>
-				</div>
-
-
-				<div class="form-row">
-					<div class="form-group col-md-6">
-						<label for="userCreateForm-user_first_name">First Name</label>
-						<input data-validation type="text" class="form-control" name="user_first_name" id="userCreateForm-user_first_name" placeholder="First Name" autocomplete="off" value="">
-					</div>
-					<div class="form-group col-md-6">
-						<label for="userCreateForm-user_last_name">Last Name</label>
-						<input data-validation type="text" class="form-control" name="user_last_name" id="userCreateForm-user_last_name" placeholder="Last Name" autocomplete="off" value="">
 					</div>
 				</div>
 

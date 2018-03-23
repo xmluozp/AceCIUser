@@ -7,7 +7,6 @@ class User_groups_model extends CI_Model {
 	public function __construct()
 	{
 		parent::__construct();
-
 		self::$db = &get_instance()->db;
 		self::$mainTableName = "user_groups";
 	}
@@ -76,7 +75,6 @@ class User_groups_model extends CI_Model {
 		self::$db->from(self::$mainTableName);
 		self::$db->where(self::$mainTableName.'.user_group_level <', $user_group_level);
 
-		self::$db->where(self::$mainTableName.'.is_deleted', false);
 		self::$db->where(self::$mainTableName.'.user_group_name !=', 'Guest');
 		self::$db->select(self::$mainTableName.'.user_group_id AS id');
 		self::$db->select(self::$mainTableName.'.user_group_name AS value');

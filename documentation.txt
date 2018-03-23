@@ -72,3 +72,5 @@ config
 composer require mailgun/mailgun-php php-http/guzzle6-adapter php-http/message
 on project root
 restart php
+config里面的session和cookie要加载
+$config['enable_hooks'] = TRUE;

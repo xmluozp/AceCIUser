@@ -143,9 +143,10 @@
 	 */
 	function continue_token($token)
 	{
+		
 		$ci =& get_instance();
 		$ci->load->model("users_model");
-
+		
 		// match the token
 		$getTokenKey = Users_model::get_tokenKey($token);
 		$tokenArray = Token::decode_token($token, $getTokenKey);
@@ -268,8 +269,10 @@
 		}
 
 		// read permissions from session
-		$permission_json = file_get_contents(base_url('initial/navigation_roles.json'));
-		$permissions_all = json_decode($permission_json, true);
+		//$permission_json = file_get_contents(base_url('initial/navigation_roles.json'));
+		//$permissions_all = json_decode($permission_json, true);
+		
+		$permissions_all = variables_get_navigation_permissions();
 
 		// get permissions from the user group
 		$userGroup = $permissions_all[(string)$userGroupId];
@@ -392,6 +395,106 @@
 		return $ajax_return;
 	}
 	
+	/// get user group id from user id.
+	function helper_datatable_varibles($gets)
+	{
+		// sanitizing
+		$datatable_varibles["start"] = $gets["start"];
+		$datatable_varibles["length"] = $gets["length"];
+		$datatable_varibles["order"] = $gets["order"];
+		$datatable_varibles["columns"] = $gets["columns"];
+		$datatable_varibles["search"] = $gets["search"];
+		$datatable_varibles["draw"] = $gets["draw"];
+
+		// sanitize the extraSearch array
+		$extraSearchs = array();
+		foreach ( $gets["extraSearch"] as $key=>$extraSearch) {
+			if(strlen($extraSearch)>0)
+			{
+				// sanitizing
+				$extraSearchs[$key] = $extraSearch;
+			}
+		}
+		$datatable_varibles["extraSearch"] = $extraSearchs;
+
+		// sanitize the filter array
+		$filters = array();
+		foreach ( $gets["filters"] as $filter){
+
+			// sanitizing
+			$filters[] = $filter;
+		}
+		$datatable_varibles["filters"] = $filters;
+
+		return $datatable_varibles;
+	}
+
+
+
+	function helper_datatable_db($db, $tableName, $datatable_paging)
+	{
+		$sql = $db->get_compiled_select();
+
+		// search by the filter
+		$filters = $datatable_paging["filters"];
+		if($datatable_paging["search"]['value'])
+		{
+			foreach ( $filters as $item) {
+				$db->or_like($item, $datatable_paging["search"]['value']);
+			}
+		}
+
+		// search for each column, will be auto
+		foreach ($datatable_paging["columns"] as $columnItem)
+		{
+			$columnName = $columnItem['data'];
+
+			if($columnItem['search']['regex'] == "true" && strlen($columnItem['search']['value']) >0)
+			{
+				$db->like($columnName, $columnItem['search']['value']);
+			}
+		}
+
+		$count = $db->count_all_results("(".$sql.") subquery", false);
+
+		// calculate the page
+		$db->limit($datatable_paging["length"], $datatable_paging["start"] );
+
+		// auto sorting
+		foreach ($datatable_paging["order"] as $item) {
+			$columnName = $datatable_paging["columns"][$item['column']]['data'];
+			$db->order_by($columnName, $item['dir']);
+		}
+
+		// use subquery to retrive combo columns
+		$query = $db->get();
+		$result = $query->result_array();
+
+
+		// generate the row id to front-end table
+		foreach($result as $key => $resultItem)
+		{
+			$result[$key]["DT_RowId"] = "row_".$resultItem["DT_RowId"];
+			$result[$key]["DT_RowAttr"] = array("data-id"=>(int)$resultItem["DT_RowId"]);
+		}
+
+		// the same
+		$returnAJAX = array(
+			"draw" => $datatable_paging["draw"],
+			"recordsTotal" => $count,
+			"recordsFiltered" => $count,
+			"data"=> $result
+		);
+
+		//print_r($datatable_paging["start"]);
+
+		//print_r($db->last_query());
+		//die();
+		return $returnAJAX;
+	}
+	
+	
+	
 	/**
 	 * Class Token
 	 * The default is 30 days token
@@ -427,6 +530,7 @@
 		// decode a token
 		public static function decode_token($jwt, $key)
 		{
+		
 			$tokens = explode('.', $jwt);
 			$key    = md5($key);
 

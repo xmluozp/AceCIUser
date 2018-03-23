@@ -9,6 +9,8 @@ if($_POST)
 	$password = trim(filter_input(INPUT_POST, 'password'));
 	$user_table = trim(filter_input(INPUT_POST, 'user_table'));
 	$role_table = trim(filter_input(INPUT_POST, 'role_table'));
+	$org_table = trim(filter_input(INPUT_POST, 'org_table'));
+	
 	
 	define('DB_DSN','mysql:host=' . $hostname. ';dbname='. $databasename);
 	define('DB_USER',$username);
@@ -23,6 +25,9 @@ if($_POST)
 	
 	$query = "DROP TABLE ".$user_table .";";
 	$query .= "DROP TABLE ".$role_table. ";";
+	$query .= "DROP TABLE ".$org_table. ";";
+	
+	
 	$statement = $db->prepare($query);
 	$statement->execute();			
 	
@@ -58,13 +63,23 @@ if($_POST)
 		user_group_level	INT(11)
 	);";
 	
+	$query .= "CREATE TABLE ". $org_table ." (
+		organization_id 		INT(11) AUTO_INCREMENT PRIMARY KEY,
+		organization_name		VARCHAR(50),
+		is_deleted				BOOLEAN DEFAULT 0
+	);";
+	
+	$statement = $db->prepare($query);
+	$statement->execute();		
+	
 	// insert the super admin user
+	$query =  "INSERT INTO " . $org_table."(organization_name) VALUES('Ace Space');";
+	
 	$query .=  "INSERT INTO " . $user_table."(user_email, user_password, user_group_id) VALUES('administrator@aceciuser.none', '', 2);";
+	
 	$query .=  "INSERT INTO ".$role_table. "(user_group_id, user_group_name,user_group_level) VALUES(0, 'Visitor', 0);";
 	$query .=  "INSERT INTO ".$role_table. "(user_group_id, user_group_name,user_group_level) VALUES(1, 'Normal User', 1);";
 	$query .=  "INSERT INTO ".$role_table. "(user_group_id, user_group_name,user_group_level) VALUES(2, 'Administrator', 2);";
-
-
 	
 	$statement = $db->prepare($query);
 	$statement->execute();		
@@ -95,6 +110,7 @@ if($_POST)
 		
 			<p><label>Name of the User Table:</label> <input type="text" name="user_table" value="users"/></p>
 			<p><label>Name of the Role Table:</label> <input type="text" name="role_table" value="user_groups"/></p>
+			<p><label>Name of the Organization Table:</label> <input type="text" name="org_table" value="organizations"/></p>
 			
 			
 			<button>Generate</button>

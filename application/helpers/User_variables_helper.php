@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Register the permission to role
  * user level (using constant variable here), class name, function name, operator
@@ -8,20 +7,58 @@
 function variables_get_auth()
 {
 	$returnValue = array();
-	$returnValue[] = array(GUEST, "Users","*", ">=");
-	$returnValue[] = array(GUEST, "Home","*", ">");
-	$returnValue[] = array(GUEST, "Users","view_forgot", "=");
-	$returnValue[] = array(GUEST, "Users","view_forgot2", "=");
-	$returnValue[] = array(GUEST, "Users","view_forgo3", "=");
+	$returnValue[] = array(VISITOR, "Users","*", ">=");
+	$returnValue[] = array(VISITOR, "Users","view_login_success", ">=");
+	$returnValue[] = array(VISITOR, "Users","view_forgot", "=");
+	$returnValue[] = array(VISITOR, "Users","view_forgot2", "=");
+	$returnValue[] = array(VISITOR, "Users","view_forgo3", "=");
 
-	$returnValue[] = array(BUSINESS_MANAGER,"Users","index", ">=");
-	$returnValue[] = array(BUSINESS_MANAGER,"Users","ajax_update", ">=");
-	$returnValue[] = array(BUSINESS_MANAGER,"Users","ajax_create", ">=");
-	$returnValue[] = array(BUSINESS_MANAGER, "Users","ajax_switchActive",  ">=");
-	$returnValue[] = array(BUSINESS_MANAGER, "Users","ajax_userDelete",  ">=");
+	$returnValue[] = array(VISITOR,"Users","index", ">");
+	$returnValue[] = array(VISITOR,"Users","view_home", ">");
+	
+	$returnValue[] = array(VISITOR,"Users","ajax_update", ">");
+	$returnValue[] = array(VISITOR,"Users","ajax_create", ">");
+	$returnValue[] = array(VISITOR,"Users","ajax_switchActive",  ">");
+	$returnValue[] = array(VISITOR,"Users","ajax_userDelete",  ">");
 
-	$returnValue[] = array(DISPATCHER, "Users","ajax_userDetails",  ">=");
+	$returnValue[] = array(VISITOR, "Users","ajax_userDetails",  ">");
 
+	return $returnValue;
+}
+
+/**
+ * Navigation bar for different users
+ * @return array
+ */
+function variables_get_navigation_permissions()
+{
+	
+	$returnValue = array();
+	
+	$returnValue["0"] = array(
+		"GroupName"	  => "Guest",
+		"Extended"	  => array(),
+		"Permissions" => array(
+			
+		)	
+	);
+	
+	$returnValue["1"] = array(
+		"GroupName"	  => "Guest",
+		"Extended"	  => array(),
+		"Permissions" => array(
+			"home",
+			"usr","usr01",
+			"org"
+		)	
+	);
+	
+	$returnValue["2"] = array(
+		"GroupName"	  => "Guest",
+		"Extended"	  => array("1"),
+		"Permissions" => array()	
+	);
+	
 	return $returnValue;
 }
 
@@ -36,126 +73,14 @@ function variables_get_navigation(){
 	$returnValue[] = array(
 		"FunctionCode"	=>	"home",
 		"Name"			=>	"Home",
-		"Target"		=>	"Home");
-
-
-	// -----------------------------orders
-	$subitems[] = array(
-		"FunctionCode"	=>	"ord01"	,
-		"Name"			=>	"Create Order",
-		"Target"		=>	"index.php");
-
-	$subitems[] = array(
-		"FunctionCode"	=>	"ord02"	,
-		"Name"			=>	"View Orders",
-		"Target"		=>	"index.php",
-		"Divider"		=>	true);
-
-	$returnValue[] = array(
-		"FunctionCode"	=>	"ord",
-		"Name"			=>	"Orders",
-		"Target"		=>	"index.php",
-		"Subitems"		=> 	$subitems);
-	$subitems = Array();
-
-	// -----------------------------trips
-
-	$subitems[] = array(
-		"FunctionCode"	=>	"trp01"	,
-		"Name"			=>	"View Trips",
-		"Target"		=>	"index.php");
-
-	$subitems[] = array(
-		"FunctionCode"	=>	"trp02"	,
-		"Name"			=>	"Trip Events",
-		"Target"		=>	"index.php");
-
-	$subitems[] = array(
-		"FunctionCode"	=>	"trp03"	,
-		"Name"			=>	"Trip Logs",
-		"Target"		=>	"index.php");
-
-	$subitems[] = array(
-		"FunctionCode"	=>	"trp04"	,
-		"Name"			=>	"Inspections List",
-		"Target"		=>	"index.php",
-		"Divider"		=> 	true);
-
-	$returnValue[] = array(
-		"FunctionCode"	=>	"trp",
-		"Name"			=>	"Trips",
-		"Target"		=>	"index.php",
-		"Subitems"		=> 	$subitems);
-
-	$subitems = Array();
-	// -----------------------------resources
-
-	$subitems[] = array(
-		"FunctionCode"	=>	"rsc03"	,
-		"Name"			=>	"Trucks"	,
-		"Target"		=>	"index.php");
-	$subitems[] = array(
-		"FunctionCode"	=>	"rsc04"	,
-		"Name"			=>	"Axles"	,
-		"Target"		=>	"index.php");
-	$subitems[] = array(
-		"FunctionCode"	=>	"rsc05"	,
-		"Name"			=>	"Trailers"	,
-		"Target"		=>	"index.php");
-	$subitems[] = array(
-		"FunctionCode"	=>	"rsc06"	,
-		"Name"			=>	"Cargos"	,
-		"Target"		=>	"index.php");
-
-	$subitems[] = array(
-		"FunctionCode"	=>	"rsc01"	,
-		"Name"			=>	"Contacts"	,
-		"Target"		=>	"Contacts",
-		"Divider"		=> 	true);
-	$subitems[] = array(
-		"FunctionCode"	=>	"rsc02"	,
-		"Name"			=>	"Locations"	,
-		"Target"		=>	"Locations");
-
-	$subitems[] = array(
-		"FunctionCode"	=>	"rsc07"	,
-		"Name"			=>	"Driver's Licenses"	,
-		"Target"		=>	"index.php",
-		"Divider"		=> 	true);
-
-	$returnValue[] = array(
-		"FunctionCode"	=>	"rsc",
-		"Name"			=>	"Resources",
-		"Target"		=>	"index.php",
-		"Subitems"		=> 	$subitems);
-
-	$subitems = Array();
+		"Target"		=>	"users/view_home");
 
 	// -----------------------------users
 
 	$subitems[] = array(
 		"FunctionCode"	=>	"usr01"	,
 		"Name"			=>	"User Accounts",
-		"Target"		=>	"Users");
-
-	$subitems[] = array(
-		"FunctionCode"	=>	"usr_lg"	,
-		"Name"			=>	"User Logs",
-		"Target"		=>	"User_logs");
-
-
-
-	$subitems[] = array(
-		"FunctionCode"	=>	"usr02"	,
-		"Name"			=>	"Customers",
-		"Target"		=>	"Customers",
-		"Divider"		=> 	true);
-
-	$subitems[] = array(
-		"FunctionCode"	=>	"usr03"	,
-		"Name"			=>	"Drivers",
-		"Target"		=>	"Customers");
-
+		"Target"		=>	"users");
 
 	$returnValue[] = array(
 		"FunctionCode"	=>	"usr",
@@ -167,16 +92,39 @@ function variables_get_navigation(){
 	$returnValue[] = array(
 		"FunctionCode"	=>	"org",
 		"Name"			=>	"Organizations",
-		"Target"		=>	"Organizations");
-
-
-
+		"Target"		=>	"organizations");
 
 	return $returnValue;
 }
 
+
 /**
- * convert updated format to database format
- * @param $date
- * @return string
+ *
  */
+function variables_emails($type = 0, $emailAddress = "", $varibles = array())
+{
+	
+	$emailArray[0] = "error";
+	
+	$emailArray[""] = "";
+	
+	$emailArray['reset_password'] = "<p style='font-size: 15px; line-height:40px;'>Hello, ".$emailAddress. "<br/>" .
+			"Please reset your password through this link: <br/> <a href='". $varibles[0]. "' target='_blank' style='font-size: 24px;'>RESET YOUR PASSWORD</a>".
+			"<br/> Or copy and paste thie URL into your browser address bar: <br/>".
+			$varibles[0]. "<br/></p>";
+	
+	$emailArray['create_user'] = "<p style='font-size: 15px; line-height:40px;'>Hello, ".$emailAddress. "<br/>" .
+					"Your account has been created. <br/> Your password is: ". $varibles[0] ."</p>";
+			
+			
+	$emailArray['sign_up'] = "<p style='font-size: 15px; line-height:40px;'>Hello, ".$emailAddress. "<br/>" .
+				"Your account has been created. <br/> ".				
+				"Please active your account through this link: <br/> <a href='". $varibles[0]. "' target='_blank' style='font-size: 24px;'>ACTIVE YOUR ACCOUNT</a>".
+				"<br/> Or copy and paste thie URL into your browser address bar: <br/>".
+				$varibles[0]. "<br/></p>";
+				
+	
+	return $emailArray[$type];
+	
+	
+}

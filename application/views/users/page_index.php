@@ -48,8 +48,7 @@
 		<th data-source="user_id" data-filter style="width:10px;">#</th>
 		<th data-source="user_group" data-filter>User Group</th>
 		<th data-source="user_email" data-filter >Email</th>
-		<th data-source="user_full_name" data-filter>Full Name</th>
-		<th data-source="user_created" data-orderby-desc >Created date</th>
+		<th data-source="user_created" data-filter data-orderby-desc >Created date</th>
 		<th data-source="user_active" data-icon="boolean" data-class="btn_active">Active</th>
 		<th data-source="user_id" data-class="edit_column" style="width: 120px;" data-render="toolbar" data-toolbar></th>
 	</tr>
@@ -81,7 +80,7 @@
 
 		// initialize the Datatable
 		ajaxTarget = "<?php echo site_url('Users/ajax_listPaging'); ?>";
-		//lastColumn = '<i data-toggle="modal" data-keyboard="true" data-target=".modal" data-backdrop="static" class="material-icons buttons_detail" title="User Detail">settings</i> <i class="material-icons log_button" title="User Log">history</i> <i class="material-icons delete_button" title="Delete">delete_forever</i>';
+
 		advancedSearchFormSelector = "#advanced_search";
 
 		oTable = new create_dataTable(
@@ -201,7 +200,6 @@ function toolbar(data, type, row, meta)
 {
 	//console.log(data);
 	toolButtons = '<i id="toolButtons_modalDetail" data-toggle="modal" data-keyboard="true" data-target=".modal" data-backdrop="static" class="material-icons" title="User Detail">settings</i>';
-	toolButtons += '<a target="_blank" href="<?=site_url("User_logs/view_List_by_id/")?>' +data+'"><i class="material-icons log_button" title="User Log">history</i></a>';
 
 	// only for admin users
 	toolButtons += '<i class="material-icons delete_button" title="Delete">delete_forever</i>';

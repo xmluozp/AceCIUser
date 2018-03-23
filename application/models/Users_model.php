@@ -15,7 +15,6 @@ class Users_model extends CI_Model {
 		self::$db = &get_instance()->db;
 		self::$mainTableName = "users";
 		
-		$this->load->helper('cookie');
 		$this->load->helper('User_email');
 		$this->load->helper('User_utilities');
 		$this->load->helper('User_variables');
@@ -249,34 +248,6 @@ class Users_model extends CI_Model {
 		return $returnAJAX;
 	}
 
-	/*
-	 * Get the group level of an user
-	 * */
-	/*public function read_user_group_level($user_id)
-	{
-		//$CI =& get_instance();
-		//$CI->load->database();
-		//$db = $CI->db;
-
-		$db = self::$db;
-		$db-> from(self::$mainTableName);
-		$db-> join('user_groups', 'user_groups.user_group_id = users.user_group_id');
-
-		$db->select('user_group_level');
-		$db->where('users.user_id' , $user_id);
-
-		$result = $db->get()->row();
-
-		if($result)
-		{
-			return $result->user_group_level;
-		}
-		else
-		{
-			return 0;
-		}
-	}
-*/
 	public function switch_active($user_id)
 	{
 		self::$db->set('user_active', 'NOT user_active', FALSE);
@@ -375,7 +346,7 @@ class Users_model extends CI_Model {
 		self::$db->set('user_password', "'".$newPassword ."'", FALSE);
 
 		// if its called from "forgot password" process, lock the account
-		self::$db->set('user_reset_password', 'NULL' , FALSE);
+		self::$db->set('user_token_reset_password', 'NULL' , FALSE);
 
 		self::$db->where($data);
 
@@ -384,12 +355,23 @@ class Users_model extends CI_Model {
 
 	public function update_reset_password($resetPass, $data = array())
 	{
-		self::$db->set('user_reset_password', "'".$resetPass ."'", FALSE);
+		self::$db->set('user_token_reset_password', "'".$resetPass ."'", FALSE);
 
 		self::$db->where($data);
 
 		self::$db->update(self::$mainTableName);
 	}
+	
+	public function update_delete_token($id)
+	{
+		self::$db->set('user_token', 'NULL' , FALSE);
+		self::$db->set('user_token_key', 'NULL' , FALSE);
+	
+		self::$db->where("user_id", $id);
+
+		self::$db->update(self::$mainTableName);
+	}	
+	
 }
 
 

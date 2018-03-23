@@ -10,8 +10,8 @@ class Users extends CI_Controller {
 		$this->load->database();
 		$this->load->model('users_model');
 		$this->load->model('user_groups_model');
+		$this->load->model('organizations_model');
 		
-		$this->load->library('session');
 		$this->load->library('form_validation');
 
 
@@ -52,11 +52,11 @@ class Users extends CI_Controller {
 
 		$data['initSearchData'] = json_encode($conditions);
 
-		$this->load->view('templates/header', $data);
-		$this->load->view('templates/navigation');
-		$this->load->view('users/index', $data);
+		$this->load->view('users/inc_header', $data);
+		$this->load->view('users/inc_navigation');
+		$this->load->view('users/page_index', $data);
 		$this->load->view('users/form_modal_user.php', $data);
-		$this->load->view('templates/footer');
+		$this->load->view('users/inc_footer');
 	}
 
 	/**
@@ -87,10 +87,10 @@ class Users extends CI_Controller {
 		$data['errorMessages'] = $errorMessages;
 		$data['json_error'] = $json_error;
 
-		$this->load->view('users/header', $data);
+		$this->load->view('users/inc_header', $data);
 		$this->load->view('users/inc_full_asset', $data);
 		$this->load->view('users/page_login', $data);
-		$this->load->view('users/footer');
+		$this->load->view('users/inc_footer');
 	}
 
 	public function form_login()
@@ -170,11 +170,38 @@ class Users extends CI_Controller {
 			$data['welcome'] = "Please active your account before you can use it";
 		}
 		
-		$this->load->view('users/header', $data);
+		$data['nav'] = get_nav();
+		
+		$this->load->view('users/inc_header', $data);
+		
+		if($isActive)
+		{
+			$this->load->view('users/inc_navigation');
+		}
+		
 		$this->load->view('users/inc_full_asset', $data);
-		$this->load->view('users/page_login_success', $data);
-		$this->load->view('users/footer');
+		$this->load->view('users/page_home', $data);
+		$this->load->view('users/inc_footer');
 	}
+	
+	public function view_home()
+	{
+		$data['title'] = 'Home';
+		
+		$data['welcome'] = "Welcome, " . get_user_email() . "<br/>";
+		$data['welcome'] .= "Your User Id is: " . get_user_id() . "<br/>";
+		$data['welcome'] .= "Your User group Id is: " . get_user_group_id() . "<br/>";
+		$data['welcome'] .= "Your User group Name is: " . get_user_group_name() . "<br/>";
+		$data['welcome'] .= "which is level " . get_user_group_level() . "<br/>";			
+		
+		$data['nav'] = get_nav();
+		$this->load->view('users/inc_header', $data);
+		$this->load->view('users/inc_navigation');
+		$this->load->view('users/inc_full_asset', $data);
+		$this->load->view('users/page_home', $data);
+		$this->load->view('users/inc_footer');
+	}
+	
 	
 	/*
 	 * ====================================================================
@@ -190,10 +217,10 @@ class Users extends CI_Controller {
 		$data['errorMessages'] = $errorMessages;
 		$data['json_error'] = $json_error;
 
-		$this->load->view('users/header', $data);
+		$this->load->view('users/inc_header', $data);
 		$this->load->view('users/inc_full_asset', $data);
 		$this->load->view('users/page_signup', $data);
-		$this->load->view('users/footer');
+		$this->load->view('users/inc_footer');
 	}	
 		
 	public function form_signup()
@@ -201,8 +228,8 @@ class Users extends CI_Controller {
 		// for extension: the project doing email validation, user will be inactive when signup, otherwise change it to FALSE.
 		$is_email_inform = TRUE;
 
-		// for extension: if this project doing organizations, need codes to get the org id
-		$organization_id = get_organization_id();
+		// for extension: if this project doing organizations, need more functions to get the org id
+		$organization_id = 1;
 
 		$user_email		 = $this->input->post('user_email');
 		$user_password	 = $this->input->post('user_password');
@@ -255,17 +282,21 @@ class Users extends CI_Controller {
 			
 				$callback_url = site_url("users/func_active/" . $result . "/".$data['user_active_code']);
 				
-				$email['email_message'] = "<p style='font-size: 15px; line-height:40px;'>Hello, ".$user_email. "<br/>" .
-				"Your account has been created. <br/> ".				
-				"Please active your account through this link: <br/> <a href='". $callback_url. "' target='_blank' style='font-size: 24px;'>ACTIVE YOUR ACCOUNT</a>".
-				"<br/> Or copy and paste thie URL into your browser address bar: <br/>".
-				$callback_url. "<br/></p>";
-
+				// The content be modified from User_variables_helper.php
+				$email['email_message'] = variables_emails("sign_up", $user_email, array($callback_url));			
 				$email['email_subject'] = 'Do-Not-Reply: Your account has been created';
 				$email['email_to'] = $user_email;
-
+				
 				// call function in Email_helper
 				send_email($email);
+				
+				$data['type'] = 1;
+				$data['messages'] = 'Your account has been created. Please active your account.';	
+				
+				$this->load->view('users/inc_header', $data);
+				$this->load->view('users/inc_full_asset', $data);
+				$this->load->view('users/page_message', $data);
+				$this->load->view('users/inc_footer');
 			}
 		}
 	}	 
@@ -288,10 +319,10 @@ class Users extends CI_Controller {
 			$data['messages'] = 'Active Failed';	
 		}
 		
-		$this->load->view('users/header', $data);
+		$this->load->view('users/inc_header', $data);
 		$this->load->view('users/inc_full_asset', $data);
 		$this->load->view('users/page_message', $data);
-		$this->load->view('users/footer');
+		$this->load->view('users/inc_footer');
 	}
 
 	 
@@ -307,10 +338,10 @@ class Users extends CI_Controller {
 		$data['title'] = 'Forgot Password - Send Email';
 		$data['nav'] = get_nav();
 
-		$this->load->view('templates/header', $data);
-		$this->load->view('templates/navigation');
-		$this->load->view('users/forgot', $data);
-		$this->load->view('templates/footer');
+		$this->load->view('users/inc_header', $data);
+		$this->load->view('users/inc_navigation');
+		$this->load->view('users/page_forgot', $data);
+		$this->load->view('users/inc_footer');
 	}
 
 	public function view_forgot2($args)
@@ -319,10 +350,10 @@ class Users extends CI_Controller {
 		$data['nav'] = get_nav();
 		$data['user_email'] = $args['user_email'];
 
-		$this->load->view('templates/header', $data);
-		$this->load->view('templates/navigation');
-		$this->load->view('users/forgot2', $data);
-		$this->load->view('templates/footer');
+		$this->load->view('users/inc_header', $data);
+		$this->load->view('users/inc_navigation');
+		$this->load->view('users/page_forgot2', $data);
+		$this->load->view('users/inc_footer');
 	}
 
 	public function view_forgot3($email="", $key = "", $expired = FALSE, $json_error = "")
@@ -332,9 +363,9 @@ class Users extends CI_Controller {
 		$data['nav'] = get_nav();
 		$data['errorMessages'] = '';
 		$data['user_email'] = rawurldecode($email);
-		$data['user_reset_password'] = $key;
+		$data['user_token_key'] = $key;
 
-		$token = ($this->users_model->read_from_email($data['user_email']))["user_reset_password"];
+		$token = ($this->users_model->read_from_email($data['user_email']))["user_token_reset_password"];
 
 		$key = rawurldecode($key);
 
@@ -345,7 +376,7 @@ class Users extends CI_Controller {
 		// if it's going to reset password
 		$isResetPassword = $this->users_model->exists(
 			array('user_email'=> $data['user_email'],
-				'user_reset_password IS NOT NULL' => null));
+				'user_token_reset_password IS NOT NULL' => null));
 
 		$expired = $expired || !$isResetPassword;
 
@@ -354,10 +385,10 @@ class Users extends CI_Controller {
 			$data['errorMessages'] = "Request Expired";
 		}
 
-		$this->load->view('templates/header', $data);
-		$this->load->view('templates/navigation');
-		$this->load->view('users/forgot3', $data);
-		$this->load->view('templates/footer');
+		$this->load->view('users/inc_header', $data);
+		$this->load->view('users/inc_navigation');
+		$this->load->view('users/page_forgot3', $data);
+		$this->load->view('users/inc_footer');
 	}
 
 	public function view_forgot4()
@@ -365,10 +396,10 @@ class Users extends CI_Controller {
 		$data['title'] = 'Forgot Password - Success';
 		$data['nav'] = get_nav();
 
-		$this->load->view('templates/header', $data);
-		$this->load->view('templates/navigation');
-		$this->load->view('users/forgot4', $data);
-		$this->load->view('templates/footer');
+		$this->load->view('users/inc_header', $data);
+		$this->load->view('users/inc_navigation');
+		$this->load->view('users/page_forgot4', $data);
+		$this->load->view('users/inc_footer');
 	}
 
 	/**
@@ -413,7 +444,7 @@ class Users extends CI_Controller {
 		$user_email = $this->input->post('user_email');
 		//$user_password = $this->input->post('user_password');
 
-		$user_reset_password = $this->input->post('user_reset_password');
+		$user_token_key = $this->input->post('user_token_key');
 		$user_new_password = $this->input->post('user_password');
 		$user_confirm = $this->input->post('user_confirm');
 		$remember_me = $this->input->post('remember_me');
@@ -435,19 +466,19 @@ class Users extends CI_Controller {
 		{
 			$json_error = json_encode($validation_result);
 
-			$this->view_forgot3($user_email, $user_reset_password,FALSE , $json_error);
+			$this->view_forgot3($user_email, $user_token_key,FALSE , $json_error);
 		}
 		else
 		{
 			// if its not a resetting password and not an already-login user:
 			$isResetPassword = $this->users_model->exists(
 				array('user_email'=> $user_email,
-					'user_reset_password IS NOT NULL' => null));
+					'user_token_reset_password IS NOT NULL' => null));
 
 			// check the token
-			$token = ($this->users_model->read_from_email($user_email))["user_reset_password"];
-			$tokenDecoded = Token::decode_token($token, $user_reset_password);
-
+			$token = ($this->users_model->read_from_email($user_email))["user_token_reset_password"];
+			$tokenDecoded = Token::decode_token($token, $user_token_key);
+			
 			$expired = !$tokenDecoded;
 
 			if($isResetPassword && !$expired)
@@ -460,7 +491,7 @@ class Users extends CI_Controller {
 			}
 			else
 			{
-				$this->view_forgot3($user_email, $user_reset_password,TRUE);
+				$this->view_forgot3($user_email, $user_token_key,TRUE);
 			}
 		}
 	}
@@ -478,10 +509,10 @@ class Users extends CI_Controller {
 		$data['title'] = 'Change Password - Send Email';
 		$data['nav'] = get_nav();
 
-		$this->load->view('templates/header', $data);
-		$this->load->view('templates/navigation');
-		$this->load->view('users/change_password', $data);
-		$this->load->view('templates/footer');
+		$this->load->view('users/inc_header', $data);
+		$this->load->view('users/inc_navigation');
+		$this->load->view('users/page_change_password', $data);
+		$this->load->view('users/inc_footer');
 	}
 
 	public function view_changePassword2($args)
@@ -490,10 +521,10 @@ class Users extends CI_Controller {
 		$data['nav'] = get_nav();
 		$data['user_email'] = $args['user_email'];
 
-		$this->load->view('templates/header', $data);
-		$this->load->view('templates/navigation');
-		$this->load->view('users/change_password2', $data);
-		$this->load->view('templates/footer');
+		$this->load->view('users/inc_header', $data);
+		$this->load->view('users/inc_navigation');
+		$this->load->view('users/page_change_password2', $data);
+		$this->load->view('users/inc_footer');
 	}
 
 	public function view_changePassword3($email="", $key = "", $expired = FALSE, $json_error = "")
@@ -504,7 +535,7 @@ class Users extends CI_Controller {
 		$data['nav'] = get_nav();
 		$data['errorMessages'] = '';
 
-		$token = ($this->users_model->read(get_user_id()))["user_reset_password"];
+		$token = ($this->users_model->read(get_user_id()))["user_token_reset_password"];
 		$key = rawurldecode($key);
 
 		// try decode the token
@@ -519,13 +550,13 @@ class Users extends CI_Controller {
 		else
 		{
 			$data['user_email'] = $tokenDecoded["email"];
-			$data['user_reset_password'] = $key;
+			$data['user_token_reset_password'] = $key;
 		}
 
-		$this->load->view('templates/header', $data);
-		$this->load->view('templates/navigation');
-		$this->load->view('users/change_password3', $data);
-		$this->load->view('templates/footer');
+		$this->load->view('users/inc_header', $data);
+		$this->load->view('users/inc_navigation');
+		$this->load->view('users/page_change_password3', $data);
+		$this->load->view('users/inc_footer');
 	}
 
 	public function form_changePassword_sendEmail()
@@ -545,9 +576,11 @@ class Users extends CI_Controller {
 	 */
 	public function func_logout()
 	{
-		$this->session->sess_destroy();
+		$this->session->sess_destroy();	
 		delete_cookie("token","");
-
+		
+		// clear token in database
+		$this->users_model->update_delete_token(get_user_id());
 		$this->view_login();
 	}
 
@@ -572,12 +605,9 @@ class Users extends CI_Controller {
 
 		// generate a link
 		$callback_url = site_url($callback_base_url . "/" . rawurlencode($user_email). "/".rawurlencode($pass_reset_code));
-
-		$email['email_message'] = "<p style='font-size: 15px; line-height:40px;'>Hello, ".$user_email. "<br/>" .
-			"Please reset your password through this link: <br/> <a href='". $callback_url. "' target='_blank' style='font-size: 24px;'>RESET YOUR PASSWORD</a>".
-			"<br/> Or copy and paste thie URL into your browser address bar: <br/>".
-			$callback_url. "<br/></p>";
-
+		
+		// The content be modified from User_variables_helper.php
+		$email['email_message'] = variables_emails("reset_password", $user_email, array($callback_url));				
 		$email['email_subject'] = 'Do-Not-Reply: Password Reset For Randomtransport Application';
 		$email['email_to'] = $user_email;
 
@@ -614,7 +644,7 @@ class Users extends CI_Controller {
 
 		$validation_result = func_run_with_ajax($this->form_validation);
 	
-		if ($validation_result["success"] === FALSE)
+		if ($validation_result["success"] !== FALSE)
 		{
 
 			$data['user_password'] = password_hash($data['user_password'], PASSWORD_DEFAULT);
@@ -624,9 +654,9 @@ class Users extends CI_Controller {
 
 			if($result && $is_email_inform)
 			{
-				$email['email_message'] = "<p style='font-size: 15px; line-height:40px;'>Hello, ".$user_email. "<br/>" .
-					"Your account has been created. <br/> Your password is: ". $user_password."</p>";
-
+				
+				// The content be modified from User_variables_helper.php
+				$email['email_message'] = variables_emails("create_user", $user_email, array($user_password));			
 				$email['email_subject'] = 'Do-Not-Reply: Your account has been created';
 				$email['email_to'] = $user_email;
 
@@ -672,7 +702,7 @@ class Users extends CI_Controller {
 		//================== above is codeigniter things==================
 		$validation_result = func_run_with_ajax($this->form_validation);
 	
-		if ($validation_result["success"] === FALSE)
+		if ($validation_result["success"] !== FALSE)
 		{
 
 			// send the form to proccessing code

@@ -28,7 +28,7 @@ class UserAuth {
 		// check user group, if its a locked account, the user group is GUEST
 		if(!$this->checkAuth($className, $functionName)){
 
-			$errorMessage = rawurlencode("Oops, you are using a function: ". $functionName . " which is not permitted.");
+			$errorMessage = rawurlencode("No permission");
 
 			if($this->CI->input->is_ajax_request())
 			{
