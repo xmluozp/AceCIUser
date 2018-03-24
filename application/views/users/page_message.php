@@ -1,5 +1,3 @@
-
-<link href="<?php echo base_url('assets/css/guest_style.css');?>" rel="stylesheet">
 <div class="row page-heading bg-light">
 <div class="col page-title"><h2><?php echo $title; ?></h2></div>
 </div>
@@ -36,9 +34,16 @@
 				
 				</div>
 			</div>
-	<?php endif?>
+			<?php endif?>
+	
 		</div>
-
+		<div class="modal-footer">
+			<div class="col-md-12" style="padding-left: 10px;">
+				<a href="<?php echo site_url('users/view_login');?>" style="color: #999">
+					<i class="material-icons" style="color: #999">arrow_back</i>
+					Back To Login</a>
+			</div>
+		</div>
 	</div>
 </div>
 

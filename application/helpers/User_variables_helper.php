@@ -92,7 +92,7 @@ function variables_get_navigation(){
 	$returnValue[] = array(
 		"FunctionCode"	=>	"org",
 		"Name"			=>	"Organizations",
-		"Target"		=>	"organizations");
+		"Target"		=>	"Organizations");
 
 	return $returnValue;
 }

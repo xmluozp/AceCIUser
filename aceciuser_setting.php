@@ -1,5 +1,19 @@
 <?php
 
+// only to satisfy codeigniter code:
+define('BASEPATH', "");
+define('ENVIRONMENT', "");
+require "application/config/database.php";
+require "application/config/constants.php";
+
+
+
+$df_hostname = $db['default']['hostname'];
+$df_database = $db['default']['database'];
+$df_username = $db['default']['username'];
+$df_password = $db['default']['password'];
+
+
 if($_POST)
 {
 	
@@ -64,16 +78,17 @@ if($_POST)
 	);";
 	
 	$query .= "CREATE TABLE ". $org_table ." (
-		organization_id 		INT(11) AUTO_INCREMENT PRIMARY KEY,
-		organization_name		VARCHAR(50),
-		is_deleted				BOOLEAN DEFAULT 0
+		organization_id 		INT(11) PRIMARY KEY,
+		organization_name		VARCHAR(64),
+		organization_logo		VARCHAR(64)
 	);";
 	
 	$statement = $db->prepare($query);
 	$statement->execute();		
 	
 	// insert the super admin user
-	$query =  "INSERT INTO " . $org_table."(organization_name) VALUES('Ace Space');";
+	$query =  "INSERT INTO " . $org_table."(organization_id, organization_name) VALUES(1, 'Ace Space');";
+	$query .=  "INSERT INTO " . $org_table."(organization_id, organization_name) VALUES(2, 'Red River College');";
 	
 	$query .=  "INSERT INTO " . $user_table."(user_email, user_password, user_group_id) VALUES('administrator@aceciuser.none', '', 2);";
 	
@@ -101,16 +116,15 @@ if($_POST)
 	</head>
 		<body>
 		<form action="" method="post">
-		
-			<p><label>database hostname:</label> <input type="text" name="hostname" value="localhost"/></p>
-			<p><label>database name:</label> <input type="text" name="databasename" value="aceciuser"/></p>
-			<p><label>database username:</label> <input type="text" name="username" value="serveruser"/></p>
-			<p><label>database password:</label> <input type="text" name="password" value="gorgonzola7!"/></p>
 
+			<p><label>database hostname:</label> <input type="text" readonly name="hostname" value="<?=$df_hostname?>"/></p>
+			<p><label>database name:</label> <input type="text" readonly name="databasename" value="<?=$df_database?>"/></p>
+			<p><label>database username:</label> <input type="text" readonly name="username" value="<?=$df_username?>"/></p>
+			<p><label>database password:</label> <input type="text" readonly name="password" value="<?=$df_password?>"/></p>
 		
-			<p><label>Name of the User Table:</label> <input type="text" name="user_table" value="users"/></p>
-			<p><label>Name of the Role Table:</label> <input type="text" name="role_table" value="user_groups"/></p>
-			<p><label>Name of the Organization Table:</label> <input type="text" name="org_table" value="organizations"/></p>
+			<p><label>Name of the User Table:</label> <input type="text" readonly name="user_table" value="<?=TABLE_USER?>"/></p>
+			<p><label>Name of the Role Table:</label> <input type="text" readonly name="role_table" value="<?=TABLE_USER_GROUP?>"/></p>
+			<p><label>Name of the Organization Table:</label> <input type="text" readonly name="org_table" value="<?=TABLE_ORG?>"/></p>
 			
 			
 			<button>Generate</button>

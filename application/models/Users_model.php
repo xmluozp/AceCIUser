@@ -13,7 +13,7 @@ class Users_model extends CI_Model {
 		
 		$this->load->database();
 		self::$db = &get_instance()->db;
-		self::$mainTableName = "users";
+		self::$mainTableName = TABLE_USER;
 		
 		$this->load->helper('User_email');
 		$this->load->helper('User_utilities');
@@ -30,9 +30,9 @@ class Users_model extends CI_Model {
 	{
 		self::$db->where(self::$mainTableName.".is_deleted", false);
 
-		if($this->current_user_group_level < ADMINISTRATOR)
+		if($this->current_user_group_level < ADMINISTRATOR || get_organization_id() != SUPER_ORGANIZATION)
 		{
-			self::$db->where('users.organization_id =', get_organization_id() );
+			self::$db->where( self::$mainTableName .'.organization_id =', get_organization_id() );
 		}
 	}
 	public function data_column_filter()
@@ -74,7 +74,12 @@ class Users_model extends CI_Model {
 		$query = self::$db->get_where(self::$mainTableName , array('user_email' => $email));
 		return $query->row_array();
 	}
-
+	
+	public function read_organization_id($id)
+	{
+		$query = self::$db->get_where(self::$mainTableName , array('user_id' => $id));
+		return $query->row()->organization_id;
+	}
 
 	public function update($id, $data)
 	{
@@ -111,18 +116,18 @@ class Users_model extends CI_Model {
 	{
 		$db = self::$db;
 
-		$tableName = "users";
+		$tableName = self::$mainTableName;
 		$db->from($tableName);
-		$db->join('user_groups', 'user_groups.user_group_id = users.user_group_id');
+		$db->join(TABLE_USER_GROUP, TABLE_USER_GROUP.'.user_group_id = '.$tableName.'.user_group_id');
 
 		$db->where(array('user_email' => $user_email));
 		$db->select('user_id');
 		$db->select('user_password');
 		$db->select($tableName. '.organization_id AS organization_id');
-		$db->select('user_groups.user_group_name AS user_group_name');
+		$db->select( TABLE_USER_GROUP.'.user_group_name AS user_group_name');
 
 		$query = $db->get();
-
+		
 		if($query->num_rows() > 0)
 		{
 			$dataBasePassword = $query -> row()-> user_password;
@@ -143,7 +148,7 @@ class Users_model extends CI_Model {
 		$db = self::$db;
 
 		$db->from($tableName);
-		$db->join('user_groups', 'user_groups.user_group_id = users.user_group_id');
+		$db->join(TABLE_USER_GROUP, TABLE_USER_GROUP.'.user_group_id = '.self::$mainTableName.'.user_group_id');
 
 		$db->where(array('user_id' => $user_id));
 		$db->where(array('user_token' => $user_token));
@@ -151,7 +156,7 @@ class Users_model extends CI_Model {
 		$db->select('user_email');
 		$db->select('user_id');
 		$db->select('organization_id');
-		$db->select('user_groups.user_group_name AS user_group_name');
+		$db->select(TABLE_USER_GROUP.'.user_group_name AS user_group_name');
 		
 
 		$query = $db->get();
@@ -204,7 +209,7 @@ class Users_model extends CI_Model {
 
 		// Need to display user group's name, so join to user_groups
 		self::$db->from(self::$mainTableName);
-		self::$db->join('user_groups', 'user_groups.user_group_id = users.user_group_id');
+		self::$db->join(TABLE_USER_GROUP, TABLE_USER_GROUP.'.user_group_id = '.self::$mainTableName.'.user_group_id');
 
 		// filter for permissions
 		$this->data_row_filter();
@@ -212,7 +217,7 @@ class Users_model extends CI_Model {
 		// also a filter, but its joining table so need to be here
 		if($user_id)
 		{
-			self::$db->where('user_groups.user_group_level <', $current_user_level );
+			self::$db->where( TABLE_USER_GROUP. '.user_group_level <', $current_user_level );
 		}
 
 		// extra search code here--------------------
@@ -230,11 +235,11 @@ class Users_model extends CI_Model {
 
 		if(array_key_exists("user_id", $extraSearch))
 		{
-			self::$db->where('users.user_id', $extraSearch["user_id"]);
+			self::$db->where( self::$mainTableName.'.user_id', $extraSearch["user_id"]);
 		}
 		// extra search code here---------------------
 
-		self::$db->select('CONCAT("[", user_groups.user_group_id, "] " ,user_group_name)AS user_group');
+		self::$db->select('CONCAT("[", '.TABLE_USER_GROUP.'.user_group_id, "] " ,user_group_name)AS user_group');
 		self::$db->select('user_id AS user_id');
 		self::$db->select('user_email AS user_email');
 		self::$db->select( dateFormat_decode("user_created"). " AS user_created");

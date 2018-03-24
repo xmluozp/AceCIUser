@@ -14,7 +14,6 @@ class Users extends CI_Controller {
 		
 		$this->load->library('form_validation');
 
-
 		$this->load->helper('form');
 		$this->load->helper('url');
 		$this->load->helper('cookie');
@@ -104,7 +103,7 @@ class Users extends CI_Controller {
 		{
 			$_SESSION['login_attempting'] = 0;
 		}
-		$isShowCaptcha = $_SESSION['login_attempting'] >= 3;
+		$isShowCaptcha = $_SESSION['login_attempting'] >= LOGIN_ATTEMPTING_LIMIT;
 
 		// validation
 		$v_data['user_email'] = $user_email;
@@ -112,7 +111,7 @@ class Users extends CI_Controller {
 	
 		$this->form_validation->set_rules('user_email', 'email', 'trim|required|valid_email');
 		$this->form_validation->set_rules('user_password', 'password', 'required|trim');
-		
+				
 		if($isShowCaptcha)
 		{
 			$v_data['captcha'] = $this->input->post('captcha');
@@ -142,7 +141,7 @@ class Users extends CI_Controller {
 			}
 			else
 			{
-				if($_SESSION['login_attempting'] < 3){$_SESSION['login_attempting'] += 1;}
+				if($_SESSION['login_attempting'] < LOGIN_ATTEMPTING_LIMIT){$_SESSION['login_attempting'] += 1;}
 				$this->view_login(rawurlencode("Wrong username or password. Attemptings: " . $_SESSION['login_attempting']));
 			}
 		}
@@ -164,6 +163,9 @@ class Users extends CI_Controller {
 			$data['welcome'] .= "Your User group Id is: " . get_user_group_id() . "<br/>";
 			$data['welcome'] .= "Your User group Name is: " . get_user_group_name() . "<br/>";
 			$data['welcome'] .= "which is level " . get_user_group_level() . "<br/>";			
+			$data['welcome'] .= "your organization id is:" . get_organization_id() . "<br/>";					
+			$data['welcome'] .= "your organization name is:" . get_organization_name() . "<br/>";						
+			$data['welcome'] .= "your organization logo is:" . get_organization_logo() . "<br/>";				
 		}
 		else
 		{
@@ -187,12 +189,6 @@ class Users extends CI_Controller {
 	public function view_home()
 	{
 		$data['title'] = 'Home';
-		
-		$data['welcome'] = "Welcome, " . get_user_email() . "<br/>";
-		$data['welcome'] .= "Your User Id is: " . get_user_id() . "<br/>";
-		$data['welcome'] .= "Your User group Id is: " . get_user_group_id() . "<br/>";
-		$data['welcome'] .= "Your User group Name is: " . get_user_group_name() . "<br/>";
-		$data['welcome'] .= "which is level " . get_user_group_level() . "<br/>";			
 		
 		$data['nav'] = get_nav();
 		$this->load->view('users/inc_header', $data);
@@ -254,7 +250,7 @@ class Users extends CI_Controller {
 		
 		// validation
 		$this->form_validation->set_data($validata);
-		$this->form_validation->set_rules('user_email', 'email', 'trim|required|valid_email|is_unique[Users.user_email]');
+		$this->form_validation->set_rules('user_email', 'email', 'trim|required|valid_email|is_unique['.TABLE_USER.'.user_email]');
 
 		$this->form_validation->set_rules('user_password', 'password', 'required|trim|callback_validate_match_password');
 		$this->form_validation->set_rules('user_confirm', 'password', 'required|trim|callback_validate_match_password');
@@ -287,10 +283,11 @@ class Users extends CI_Controller {
 				$email['email_subject'] = 'Do-Not-Reply: Your account has been created';
 				$email['email_to'] = $user_email;
 				
-				// call function in Email_helper
+				// call function in User_email_helper
 				send_email($email);
 				
 				$data['type'] = 1;
+				$data['title'] = "Account Created";
 				$data['messages'] = 'Your account has been created. Please active your account.';	
 				
 				$this->load->view('users/inc_header', $data);
@@ -312,6 +309,7 @@ class Users extends CI_Controller {
 		{		
 			$data['type'] = 1;
 			$data['messages'] = 'Active Successed';
+			$data['nav'] = get_nav();
 		}
 		else
 		{
@@ -320,6 +318,11 @@ class Users extends CI_Controller {
 		}
 		
 		$this->load->view('users/inc_header', $data);
+		if($result)
+		{
+			$this->load->view('users/inc_navigation');
+		}
+		
 		$this->load->view('users/inc_full_asset', $data);
 		$this->load->view('users/page_message', $data);
 		$this->load->view('users/inc_footer');
@@ -579,9 +582,19 @@ class Users extends CI_Controller {
 		$this->session->sess_destroy();	
 		delete_cookie("token","");
 		
-		// clear token in database
+		// clear token from database
 		$this->users_model->update_delete_token(get_user_id());
 		$this->view_login();
+	}
+	
+	public function func_kick_out($message)
+	{
+		$this->session->sess_destroy();	
+		delete_cookie("token","");
+		
+		// clear token from database
+		$this->users_model->update_delete_token(get_user_id());
+		$this->view_login($message);
 	}
 
 	private function func_sendResetPasswordEmail($user_email, $callback_base_url)
@@ -639,7 +652,7 @@ class Users extends CI_Controller {
 
 		// validation
 		$this->form_validation->set_data($data);
-		$this->form_validation->set_rules('user_email', 'email', 'trim|required|valid_email|is_unique[Users.user_email]');
+		$this->form_validation->set_rules('user_email', 'email', 'trim|required|valid_email|is_unique['.TABLE_USER.'.user_email]');
 		$this->form_validation->set_rules('user_password', 'password', 'required|trim');
 
 		$validation_result = func_run_with_ajax($this->form_validation);
@@ -704,10 +717,8 @@ class Users extends CI_Controller {
 	
 		if ($validation_result["success"] !== FALSE)
 		{
-
 			// send the form to proccessing code
 			$this->users_model->update($user_id, $data);
-			//add_log("/Users/Update, id:" . $user_id, USERLOG_UPDATE_EVENT);
 		}
 
 		echo json_encode($validation_result);

@@ -9,8 +9,6 @@
 </style>
 
 
-<link href="<?php echo base_url('assets/css/guest_style.css');?>" rel="stylesheet">
-
 <div class="logo_large">
 <img src="<?php echo base_url('assets/images/logo_lg.png');?>">
 </div>

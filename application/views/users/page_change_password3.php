@@ -1,5 +1,4 @@
 
-<link href="<?php echo base_url('assets/css/guest_style.css');?>" rel="stylesheet">
 <div class="row page-heading bg-light">
 <div class="col page-title"><h2><?php echo $title; ?></h2></div>
 </div>

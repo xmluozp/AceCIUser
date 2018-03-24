@@ -1,8 +1,9 @@
 /*
+*  Author: Zhaoping Luo
 *  The ajax validation working with codeigniter and bootstrap
 *
 *  start, tie an ajax form with this class
-*  ajax_validation(fn, form_selector)
+*  ajax_validation(form_selector, fn)
 *
 *  items with these type will be processed
 *  data-not-retrive : will be keep empty when getting data

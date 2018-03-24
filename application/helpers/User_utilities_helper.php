@@ -16,7 +16,7 @@
 		{
 			$returnValue = (continue_token($_COOKIE["token"]))["user_id"];
 		}
-
+		
 		return $returnValue;
 	}
 	
@@ -47,51 +47,94 @@
 
 		return $returnValue;
 	}
+	
+	function get_organization_name()
+	{
+		$returnValue = "error";
+		
+		$result = get_organization();
+		$returnValue= $result ? $result->organization_name : $returnValue;	
+
+		return $returnValue;
+	}
+	
+	function get_organization_logo()
+	{
+		$returnValue = "error.png";
+
+		$result = $result = get_organization();
+		$returnValue= $result ? $result->organization_logo : $returnValue;	
+
+		return UPLOAD_FOLDER . "/". $returnValue;
+	}	
 
 	function get_user_group_id()
 	{
-		$user_id = get_user_id();
-
-		if($user_id > 0)
-		{
-			$ci =& get_instance();
-			$query = $ci->db->query("SELECT user_group_id  FROM users WHERE user_id = ". $user_id);
-			$returnValue= $query->row()->user_group_id;
-		}
-		else
-		{
-			$returnValue = 0;
-		}
-
+		$returnValue = 0;
+		$result = get_user();
+		$returnValue= $result ? $result->user_group_id : $returnValue;			
 		return $returnValue;
 	}
 
 	function get_user_group_level()
 	{
-		$user_id = get_user_id();
-		if($user_id > 0) {
-			$ci =& get_instance();
-			$query = $ci->db->query("SELECT user_group_level  FROM users join user_groups on users.user_group_id = user_groups.user_group_id WHERE users.user_id = " . $user_id);
-			$returnValue = $query->row()->user_group_level;
-		}
-		else
-		{
-			$returnValue = 0;
-		}
+		$returnValue = 0;
+		$result = get_user_group();
+		$returnValue= $result ? $result->user_group_level : $returnValue;
+		
 		return $returnValue;
 	}
 
 	function get_user_group_name()
 	{
+		$returnValue = 0;
+		$result = get_user_group();
+		$returnValue= $result ? $result->user_group_name : $returnValue;				
+		
+		return $returnValue;
+	}
+	
+//=============get entities===================
+	function get_user()
+	{
+		$returnValue = 0;
+		
 		$user_id = get_user_id();
+				
+		if($user_id > 0) {
+			$ci =& get_instance();		
+			$query = $ci->db->query("SELECT *  FROM ".TABLE_USER." WHERE user_id = ". $user_id);
+			$returnValue = $query->row();			
+		}
+		
+		return $returnValue;
+	}	
+	
+	function get_user_group()
+	{
+		$returnValue = 0;
+		
+		$user_id = get_user_id();
+				
 		if($user_id > 0) {
 			$ci =& get_instance();
-			$query = $ci->db->query("SELECT user_group_name  FROM users join user_groups on users.user_group_id = user_groups.user_group_id WHERE users.user_id = " . $user_id);
-			$returnValue = $query->row()->user_group_name;
+			$query = $ci->db->query("SELECT * FROM ".TABLE_USER." join ".TABLE_USER_GROUP." on ".TABLE_USER.".user_group_id = ".TABLE_USER_GROUP.".user_group_id WHERE ".TABLE_USER.".user_id = " . $user_id);
+			$returnValue = $query->row();			
 		}
-		else
-		{
-			$returnValue = 0;
+		
+		return $returnValue;
+	}
+	
+	function get_organization()
+	{
+		$returnValue = 0;
+
+		$organization_id = get_organization_id();
+		
+		if( $organization_id > 0) {
+			$ci =& get_instance();
+			$query = $ci->db->query("SELECT * FROM ".TABLE_ORG." WHERE organization_id = " . $organization_id);
+			$returnValue = $query->row();
 		}
 		return $returnValue;
 	}
@@ -107,7 +150,7 @@
 
 		$ci =& get_instance();
 		$ci->load->model("users_model");
-
+		
 		$user = Users_model::check_password($user_email, $user_password);
 
 		if($user) {
@@ -118,7 +161,7 @@
 
 				$tokenString = generate_token($user->user_id, $tokenKey);
 			}
-
+		
 			// what will be stored in session
 			$userData = array(
 				'user_id' => $user->user_id,
@@ -192,7 +235,7 @@
 	{
 		// generate a token==========
 		$payload=array(
-			'iss' => "http://randomtransport.com", //who
+			'iss' => "Ace_CI_User", //who
 			'iat' => $_SERVER['REQUEST_TIME'], //when
 			'exp' => $_SERVER['REQUEST_TIME'] + Token::token_expiry(),
 			'tmnl' => "web",
@@ -220,35 +263,6 @@
 		return implode($pass);
 	}
 
-//================================================================ Logs
-	/**
-	 * called from anywhere, record the log to a table named "Logs"
-	 * @param $message
-	 * @return bool
-	 */
-	 /*
-	function add_log($message,$logtype, $userId = 0)
-	{
-		$ci =& get_instance();
-		$ci->load->model("user_logs_model");
-
-		$user_id = $userId;
-		if(!$user_id)
-		{
-			$user_id = get_user_id();
-		}
-
-		if($user_id)
-		{
-			// static function
-			User_logs_model::add_log($user_id, $message,$logtype);
-		}
-		else
-		{
-			return false;
-		}
-	}
-	*/
 //================================================================ Navigation bars
 
 	/**
@@ -267,10 +281,6 @@
 		{
 			$userGroupId = get_user_group_id($user_id);
 		}
-
-		// read permissions from session
-		//$permission_json = file_get_contents(base_url('initial/navigation_roles.json'));
-		//$permissions_all = json_decode($permission_json, true);
 		
 		$permissions_all = variables_get_navigation_permissions();
 
@@ -294,10 +304,8 @@
 	 */
 	function get_nav()
 	{
-		// original menu from config file. /permission.json
-		//$nav_json = file_get_contents(base_url('initial/navigations.json'));
-		//$nav = json_decode($nav_json, true);
 		$nav = variables_get_navigation();
+		
 		// get permit codes allowed for current user
 		$myPermissions = get_my_navigation_permissions();
 
@@ -408,11 +416,14 @@
 
 		// sanitize the extraSearch array
 		$extraSearchs = array();
-		foreach ( $gets["extraSearch"] as $key=>$extraSearch) {
-			if(strlen($extraSearch)>0)
-			{
-				// sanitizing
-				$extraSearchs[$key] = $extraSearch;
+		if(isset($gets["extraSearch"]))
+		{
+			foreach ( $gets["extraSearch"] as $key=>$extraSearch) {
+				if(strlen($extraSearch)>0)
+				{
+					// sanitizing
+					$extraSearchs[$key] = $extraSearch;
+				}
 			}
 		}
 		$datatable_varibles["extraSearch"] = $extraSearchs;
@@ -486,15 +497,9 @@
 			"data"=> $result
 		);
 
-		//print_r($datatable_paging["start"]);
-
-		//print_r($db->last_query());
-		//die();
 		return $returnAJAX;
 	}
-	
-	
-	
+		
 	/**
 	 * Class Token
 	 * The default is 30 days token

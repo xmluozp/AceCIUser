@@ -1,6 +1,7 @@
 /*
-*  Used for create datatable
+*  Author: Zhaoping Luo
 *
+*  Used for create datatable
 *  data-source: --- what column looking for
 *  data-orderby-desc
 *  data-orderby-asc: --- if has this attribute, will be as default sorting,
@@ -63,6 +64,7 @@ function create_dataTable(selector, url, searchForm, lastColumn)
 					filters.push(ft_item);
 				}
 
+				// set default ordering on this column
 				if($(this).attr("data-orderby-desc") != undefined)
 				{
 					priority = $(this).attr("data-orderby-desc");
@@ -77,7 +79,7 @@ function create_dataTable(selector, url, searchForm, lastColumn)
 					orderBy.push(order_item);
 				}
 
-				// when reading data, it will be an icon
+				// when reading data, it will be translated from int number to an icon
 				if($(this).attr("data-icon") != undefined)
 				{
 					icontype=$(this).attr("data-icon");
@@ -88,23 +90,27 @@ function create_dataTable(selector, url, searchForm, lastColumn)
 					};
 				}
 
+				// classes of all td elements of this column
 				if($(this).attr("data-class") != undefined)
 				{
 					ds_item["className"] = $(this).attr("data-class");
 				}
 
+				// hide the sort button for tool column
 				if($(this).attr("data-toolbar") != undefined)
 				{
 					ds_item["orderable"] = false;
 					ds_item["defaultContent"] = lastColumn;
 				}
-
+				
+				// if allow multiselects
 				if($(this).attr("data-multiselect") != undefined)
 				{
 					ds_item["orderable"] = false;
 					ds_item["checkboxes"] = {'selectRow': true};
 				}
 
+				// anything else want to run a function to generate
 				if($(this).attr("data-render") != undefined)
 				{
 					renderName = $(this).attr("data-render");
@@ -112,12 +118,6 @@ function create_dataTable(selector, url, searchForm, lastColumn)
 					if(typeof window[renderName] == "function") {
 						ds_item["render"] = window[renderName];
 					}
-					/*function(data, type, row, meta){
-						//window[$(inputItem).attr("data-render")](inputItem, value);
-						if(typeof window[renderName] == "function") {
-							return window[renderName](data, type, row, meta);
-						}
-					}*/
 				}
 
 				columns.push(ds_item);
@@ -141,24 +141,11 @@ function create_dataTable(selector, url, searchForm, lastColumn)
 		orderBy = [[ 0, "desc" ]];
 	}
 
-	/*
-	// / last column, which is tools column
-	toolButtons = {
-		"data":null,
-		"className": "edit_column",
-		"orderable": false,
-		"defaultContent" : lastColumn,
-	};
-
-	// edit column
-	columns.push(toolButtons);*/
-
 	// disable the error alert
 	$.fn.dataTable.ext.errMode = 'none';
 	$.fn.dataTable.ext.classes.sFilterInput = 'form-control';
 	$.fn.dataTable.ext.classes.sLengthSelect = 'select-inline';
 //	$.fn.dataTable.ext.classes.sPaging ='pagination pagination-sm ' + $.fn.dataTable.ext.classes.sPaging;
-
 
 	// initialize the datatable
 	datatable = $(selector).DataTable( {

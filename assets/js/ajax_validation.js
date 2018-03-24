@@ -1,8 +1,9 @@
 /*
+*  Author: Zhaoping Luo
 *  The ajax validation working with codeigniter and bootstrap
 *
 *  start, tie an ajax form with this class
-*  ajax_validation(fn, form_selector)
+*  ajax_validation(form_selector, fn)
 *
 *  items with these type will be processed
 *  data-not-retrive : will be keep empty when getting data
@@ -99,8 +100,25 @@ function ajax_validation(form_selector_val, fn) {
 		postUrl = $(form).attr("action");
 		callbackFormId = $(form).attr("id");
 
-		// formId is used to fill error messages when called back
+		var formData = new FormData( $(form)[0] );
 		$.ajax({
+			type: "POST",
+			url: postUrl,
+			data: formData,
+			processData:false,
+			contentType:false,
+			cache:false,
+			async:false,
+			success: function(data)
+			{
+				fill_error_from_json(data);
+			}
+		}).fail(function(data){
+			$("html").html(data.responseText);
+		});
+
+		// formId is used to fill error messages when called back
+		/*$.ajax({
 			type: "POST",
 			url: postUrl,
 			data: $(form).serialize(),
@@ -110,7 +128,7 @@ function ajax_validation(form_selector_val, fn) {
 			}
 		}).fail(function(data){
 			$("html").html(data.responseText);
-		});
+		});*/
 		return false;
 	}
 

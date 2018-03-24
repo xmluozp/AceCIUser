@@ -43,7 +43,7 @@
 					<input type="checkbox" class="form-check-input" id="remember_me" name="remember_me" value="1">
 					<label class="form-check-label" for="remember_me" style="cursor: pointer;">Remember Me</label>
 				</div>
-			<?php if($this->session->userdata('login_attempting')>=3):?>
+			<?php if($this->session->userdata('login_attempting')>=LOGIN_ATTEMPTING_LIMIT):?>
 			<div class="form-group">
 
 					<div class="alert alert-warning" role="alert">

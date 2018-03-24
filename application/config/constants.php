@@ -85,10 +85,23 @@ defined('EXIT__AUTO_MIN')      OR define('EXIT__AUTO_MIN', 9); // lowest automat
 defined('EXIT__AUTO_MAX')      OR define('EXIT__AUTO_MAX', 125); // highest automatically-assigned error code
 
 
-defined('VISITOR')      OR define('VISITOR', 0);
-defined('NORMAL_USER')      OR define('NORMAL_USER', 1);
-defined('ADMINISTRATOR')      OR define('ADMINISTRATOR', 2);
+
+//-----------------------------------Ace CI User --------------------------
+defined('TABLE_USER')   	  OR define('TABLE_USER', 'users');
+defined('TABLE_USER_GROUP')   OR define('TABLE_USER_GROUP', 'user_groups');
+defined('TABLE_ORG')   		  OR define('TABLE_ORG', 'organizations');
 
 
-defined('LOGIN_REDIRECTION')      OR define('LOGIN_REDIRECTION', 'users/view_login_success');
+defined('SUPER_ORGANIZATION')   OR define('SUPER_ORGANIZATION', 1);
+defined('LOGIN_ATTEMPTING_LIMIT')   OR define('LOGIN_ATTEMPTING_LIMIT', 2);
 
+defined('UPLOAD_FOLDER')     	OR define('UPLOAD_FOLDER', 'uploads');
+defined('LIMIT_UPLOAD_SIZE')    OR define('LIMIT_UPLOAD_SIZE', 1024); //KB
+
+//roles
+defined('VISITOR')     			OR define('VISITOR', 0);
+defined('NORMAL_USER')      	OR define('NORMAL_USER', 1);
+defined('ADMINISTRATOR')      	OR define('ADMINISTRATOR', 2);
+
+defined('LOGIN_REDIRECTION')    OR define('LOGIN_REDIRECTION', 'users/view_login_success');
+//-------------------------------------------------------------------------

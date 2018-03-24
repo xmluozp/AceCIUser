@@ -7,8 +7,13 @@ class UserAuth {
 	 * ManageAuth constructor.
 	 */
 	public function __construct() {
+		
 		$this->CI = &get_instance();
-
+		
+		$this->CI->load->helper('User_email');
+		$this->CI->load->helper('User_utilities');
+		$this->CI->load->helper('User_variables');	
+		
 		// set auth in helper, just make codes together
 		$authArray = variables_get_auth();
 		foreach($authArray as $obj)
@@ -32,12 +37,12 @@ class UserAuth {
 
 			if($this->CI->input->is_ajax_request())
 			{
-				$redirectString = "<!DOCTYPE html><html><head><meta http-equiv=\"Refresh\" content=\"0;url=".site_url("/Users/view_login/"). $errorMessage ."\"></head></html>";
+				$redirectString = "<!DOCTYPE html><html><head><meta http-equiv=\"Refresh\" content=\"0;url=".site_url("/Users/func_kick_out/"). $errorMessage ."\"></head></html>";
 				echo $redirectString;
 			}
 			else
 			{
-				redirect('/Users/view_login/' . $errorMessage);
+				redirect('/Users/func_kick_out/' . $errorMessage);
 			}
 			die();
 		}

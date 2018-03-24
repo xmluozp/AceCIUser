@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
   
   <a class="navbar-brand" href="#">
-	  <img src="<?php echo base_url('assets/images/logo.png');?>"/>
+	  <img src="<?=base_url(get_organization_logo())?>"/>
   </a>
 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -14,7 +14,7 @@
 		
 			<?php if(!array_key_exists('Subitems',$navItem) || empty($navItem['Subitems'])):?>
 			   <li class="nav-item">
-				<a class="nav-link" href="<?=$navItem['Target']?>"><?=$navItem['Name']?></a>
+				<a class="nav-link" href="<?=site_url($navItem['Target'])?>"><?=$navItem['Name']?></a>
 			  </li>  
 			<?php else:?> 
 			  
@@ -45,8 +45,13 @@
     </ul>
 
 	  <?php if(isset($_SESSION['user_id'])):?>
-		  <span class="navbar-nav ml-auto dropdown navbar-text" style="cursor:pointer">
-			  <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		  <span class="navbar-nav ml-auto dropdown navbar-text" >
+		  
+		<?php if(get_user_group_level() >= ADMINISTRATOR):?>
+					  <a href="<?=site_url("Organizations/func_cancel_visit")?>" style="color: rgba(255, 255, 255, 0.8); max-width: 180px; margin-top:-3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block; vertical-align: middle"><?=get_organization_name()?> - </a>
+		<?php endif?>
+		  
+			  <a class="dropdown-toggle" data-toggle="dropdown" style="cursor:pointer" aria-haspopup="true" aria-expanded="false">
 <?=$_SESSION['user_email']?> [<?=$_SESSION['user_group_name']?>]
 			  </a>
 			  <div class="dropdown-menu dropdown-menu-right">

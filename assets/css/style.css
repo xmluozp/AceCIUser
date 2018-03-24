@@ -155,6 +155,7 @@ option:disabled{
 	text-align: right;
 }
 
+
 input:-webkit-autofill {
 	-webkit-box-shadow: 0 0 0 1000px #fbf3d5 inset !important;
 }
@@ -310,4 +311,30 @@ input:-webkit-autofill {
 }
 .anchor_form_link{
 	padding-left: 10px;
+}
+
+
+.login_panel{
+	width: 580px;
+	margin: auto;
+	top: 50%;
+
+}
+
+.wizard_panel{
+	width: 580px;
+	margin: auto;
+	top: 50%;
+
+}
+
+.logo_large{
+	margin: auto;
+	text-align: center;
+	margin-top: 50px;
+	padding-bottom: 30px;
+}
+
+.login_panel .modal-content{
+	background: linear-gradient(to top, #FFFFFFFF, #FFFFFFA0);
 }
