@@ -98,15 +98,17 @@ defined('LOGIN_ATTEMPTING_LIMIT')   OR define('LOGIN_ATTEMPTING_LIMIT', 2);
 defined('UPLOAD_FOLDER')     	OR define('UPLOAD_FOLDER', 'uploads');
 defined('LIMIT_UPLOAD_SIZE')    OR define('LIMIT_UPLOAD_SIZE', 1024); //KB
 
-//roles
+// roles.
+// Caution: here is the level of role, not id.
+// You can insert any role here or change the level, but pleas keep VISITOR and ADMINISTRATOR role to satisfy user functions
 defined('VISITOR')     			OR define('VISITOR', 0);
 defined('NORMAL_USER')      	OR define('NORMAL_USER', 1);
 defined('ADMINISTRATOR')      	OR define('ADMINISTRATOR', 2);
 
 defined('LOGIN_REDIRECTION')    OR define('LOGIN_REDIRECTION', 'users/view_login_success');
-
 // The permission error message page which have to be permission-free, avoid any permission check.
 // format here please be: ControllerName/FunctionName; Case insensitive
 defined('NO_PERMISSION_ERROR_PAGE')    OR define('NO_PERMISSION_ERROR_PAGE', 'users/func_kick_out');
+defined('DEFAULT_LOGO')     	OR define('DEFAULT_LOGO', "logo.png");
 
 //-------------------------------------------------------------------------

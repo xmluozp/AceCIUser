@@ -165,7 +165,9 @@
 
 	function showLogo(data, type, row, meta)
 	{
-		return "<img src='<?=base_url(UPLOAD_FOLDER)?>/" + data + "' />";
+		picName = data?data:"error.png";
+		
+		return "<img src='<?=base_url(UPLOAD_FOLDER)?>/" + picName + "' />";
 	}
 
 </script>

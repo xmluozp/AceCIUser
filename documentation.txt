@@ -27,18 +27,20 @@ Hooks
 	
 Libraries
 	nothing
-	
 
-
-Install mailgun
+Install Mailgun
 	(if its covering to a existing project, need to:)
 	need a composer installed
 	open cmd, redirect to project root(the "index.php" directory)
 	run command:
 		composer require mailgun/mailgun-php php-http/guzzle6-adapter php-http/message
 
+Make Mailgun work
+	see mailgun website
+	Set your mail service key
+		Helpers/User_email_helper.php	
 ----------------------------
-
+Then we need configurations to make it work:
 
 Config/config.php
 	change to your base url
@@ -61,6 +63,19 @@ Config/database.php
 		'password' => '123',
 		'database' => 'aceciuser'
 
+Helpers/User_variables_helper.php
+	Here to set your project functions work with role system
+	The first function, variables_get_auth(), has to be set. Its a list of permissions. Anyone without permission will be kicked out.
+	There are 4 arguments.
+		1: the role level, not id
+		2: the Controller name needs to be checked
+		3: the Function name to be checked, * is wildcard means all functions in this controller. The wildcard checking has lower priority.
+		4: operator, could be =, >, <, >=, <=
+	For example, $returnValue[] = array(VISITOR, "Users","*", ">=");
+		means any one want to run any function in Users, has to be a VISITOR or higher(VISITOR here is 0 level, means everyone)
+	
+	
+----------------------------
 Run PHP
 		
 Open /aceciuser_setting.php

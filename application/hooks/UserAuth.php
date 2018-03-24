@@ -31,8 +31,10 @@ class UserAuth {
 		// The destination of kick out should be a permission-free page
 		$isAlreadyKickedOut = $className ."/".$functionName == strtoupper(NO_PERMISSION_ERROR_PAGE);
 		
-		// check user group, if its a locked account, the user group is GUEST
-		if(!$isAlreadyKickedOut || !$this->checkAuth($className, $functionName)){
+		// check user group, if its a locked account, the user group is VISITOR
+		$isPassAuth = $this->checkAuth($className, $functionName);
+					
+		if(!$isAlreadyKickedOut && !$isPassAuth ){
 
 			$errorMessage = rawurlencode("No permission");
 
@@ -46,7 +48,7 @@ class UserAuth {
 				redirect(NO_PERMISSION_ERROR_PAGE."/" . $errorMessage);
 			}
 			die();
-		}
+		}	
 	}
 
 	/**

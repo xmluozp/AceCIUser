@@ -63,11 +63,20 @@
 		$returnValue = "error.png";
 
 		$result = $result = get_organization();
-		$returnValue= $result ? $result->organization_logo : $returnValue;	
-
+		$returnValue= $result ? $result->organization_logo : $returnValue;
+		
 		return UPLOAD_FOLDER . "/". $returnValue;
 	}	
-
+	
+	function get_organization_logo_top()
+	{
+		$result = $result = get_organization();
+		$returnValue= $result ? $result->organization_logo : $returnValue;	
+		$returnValue = $returnValue?$returnValue:DEFAULT_LOGO;
+		
+		return "uploads/". $returnValue;
+	}	
+	
 	function get_user_group_id()
 	{
 		$returnValue = 0;
@@ -127,9 +136,14 @@
 	
 	function get_organization()
 	{
+		return get_organization_by_id(get_organization_id());
+	}
+	
+	function get_organization_by_id($id)
+	{
 		$returnValue = 0;
 
-		$organization_id = get_organization_id();
+		$organization_id = $id;
 		
 		if( $organization_id > 0) {
 			$ci =& get_instance();
@@ -137,7 +151,8 @@
 			$returnValue = $query->row();
 		}
 		return $returnValue;
-	}
+	}	
+	
 //================================================================ Tokens
 	/**
 	 * will be called by login, generate a token if user choose "remember", store to cookie

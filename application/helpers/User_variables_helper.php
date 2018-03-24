@@ -8,7 +8,6 @@ function variables_get_auth()
 {
 	$returnValue = array();
 	$returnValue[] = array(VISITOR, "Users","*", ">=");
-	$returnValue[] = array(VISITOR, "Users","view_login_success", ">=");
 	$returnValue[] = array(VISITOR, "Users","view_forgot", "=");
 	$returnValue[] = array(VISITOR, "Users","view_forgot2", "=");
 	$returnValue[] = array(VISITOR, "Users","view_forgo3", "=");
