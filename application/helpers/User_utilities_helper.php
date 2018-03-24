@@ -71,8 +71,7 @@
 	function get_organization_logo_top()
 	{
 		$result = $result = get_organization();
-		$returnValue= $result ? $result->organization_logo : $returnValue;	
-		$returnValue = $returnValue?$returnValue:DEFAULT_LOGO;
+		$returnValue= $result ? $result->organization_logo : DEFAULT_LOGO;	
 		
 		return "uploads/". $returnValue;
 	}	
