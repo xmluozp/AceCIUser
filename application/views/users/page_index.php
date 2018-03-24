@@ -86,7 +86,7 @@
 		oTable = new create_dataTable(
 			selector_dataTable,
 			ajaxTarget,
-			advancedSearchFormSelector,
+			advancedSearchFormSelector
 		);
 	} );
 

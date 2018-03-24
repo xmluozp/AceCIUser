@@ -47,7 +47,7 @@
 		  <span class="navbar-nav ml-auto dropdown navbar-text" >
 		  
 		<?php if(get_user_group_level() >= ADMINISTRATOR):?>
-					  <a href="<?=site_url("Organizations/func_cancel_visit")?>" style="color: rgba(255, 255, 255, 0.8); max-width: 180px; margin-top:-3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block; vertical-align: middle"><?=get_organization_name()?> - </a>
+					  <a href="<?=site_url("Organizations/func_cancel_visit")?>" style="color: rgba(255, 255, 255, 0.8); max-width: 180px; margin-top:-5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block; vertical-align: middle"><?=get_organization_name()?> - </a>
 		<?php endif?>
 		  
 			  <a class="dropdown-toggle" data-toggle="dropdown" style="cursor:pointer" aria-haspopup="true" aria-expanded="false">
