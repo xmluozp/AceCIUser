@@ -108,6 +108,59 @@ Then generate database and go
 
 		
 ----------------------------	
-	For additional, you can customize your navigation bar for different user groups
+For additional
 
+	you can customize your navigation bar for different user groups. (if you dont have your own navigation bar)
+		It's in
+			Helpers/User_variables_helper.php
+				variables_get_navigation()
+					Set the full navigation bar
+				variables_get_navigation_permissions()
+					Set the different user group's navigation bar
+				
+	You can set what should be put in email notification
+		It's in
+			Helpers/User_variables_helper.php
+				variables_emails()
+				
+	If you want additional columns for an user, and you want to keep the User Management page rather than use your own, then you need to modify MVC:
+		M:
+			Models/Users_model.php
+				read_datatable()
+					Change what columns should be read for the user list
+					the extraSearch part will process the Advanced Search request from User List page
+					
+		V:
+			View/users/page_index.php
+				Find the <table> tag with id="list_users", add what column you want, have to match the column name from the Model. If its not matching, that <td> fileds will be blank.
+				
+				Those attributes start with "data-" are annotation of column, if you want to use the Datatables in your project, feel free to do so.
+					*  data-source: --- name of the column you are looking for
+					*  data-orderby-desc
+					*  data-orderby-asc: --- if has this attribute, will be as default sorting
+					*  data-filter: --- what columns will be respond by the filter
+					*  data-icon: ---   if its an icon column. (the value=>icon settings are in create_datatable.js)
+					*  data-class: ---  change the column's classname
+					*  data-render: --- change content, need a render function code below. The render function arguments have to be like: fn(data, type, row, meta). The return value will be filled into the <td> tag
+					*  data-multiselect: --- set the column as multi checkbox column
+			View/users/form_modal_user.php
+				The divs userDetailModal and userCreateModal are the form of create or edit an user by the administrator.
+				If you add any item, please keep the attribute "data-validation", otherwise this item will not be submitted when you hit "save" button.
+				Those attributes start with "data-" are annotations.
+					*  data-not-retrive : will be keep empty when getting data
+					*  data-validation : will be validated when submitting data
+					*  data-render : Instead of fill-in, the system will call a function. The function format have to be like: fn(itemSelector, value)
+					
+		C:		
+			Controllers/Users.php
+				form_signup()
+					What information will be stored when user signup
+				ajax_create()
+					What information will be stored when the administrator create an user
+				ajax_update()
+					Columns of admin-update an user
+				
+			Becareful, In order to prevent anonymous requests, functions here are better been set (in the permission list). 
 
+	If you need more user groups (roles):
+		

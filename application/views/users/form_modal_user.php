@@ -171,10 +171,6 @@
 
 		ajax_createForm = new ajax_validation(selector_createForm, successCreateModal);
 		ajax_createForm.modal_selector = selector_createModal;
-
-		//180312: don't thing we need to clear textboxes when closed a create-new window.
-		//ajax_CreateForm.isCloseCheck = true;
-		//ajax_CreateForm.fn_unload = "createForm_reset";
 	});
 
 	// user detail: save

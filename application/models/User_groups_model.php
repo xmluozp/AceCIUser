@@ -75,7 +75,8 @@ class User_groups_model extends CI_Model {
 		self::$db->from(self::$mainTableName);
 		self::$db->where(self::$mainTableName.'.user_group_level <', $user_group_level);
 
-		self::$db->where(self::$mainTableName.'.user_group_name !=', 'Guest');
+		// dont retrive the VISITOR group
+		self::$db->where(self::$mainTableName.'.user_group_level !=', '0');
 		self::$db->select(self::$mainTableName.'.user_group_id AS id');
 		self::$db->select(self::$mainTableName.'.user_group_name AS value');
 

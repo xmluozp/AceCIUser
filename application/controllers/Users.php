@@ -723,17 +723,6 @@ class Users extends CI_Controller {
 	}
 
 	/**
-	 * AJAX getting information
-	 */
-	public function ajax_fullNameList()
-	{
-		$keyword = $this->input->post('keyword');
-		$list = $this->users_model->read_list_by_fullname($keyword, get_organization_id(), 0);
-
-		echo json_encode($list);
-	}
-
-	/**
 	 * AJAX read one user's data, return as JSON
 	 */
 	public function ajax_userDetails()
@@ -762,9 +751,7 @@ class Users extends CI_Controller {
 	{
 		$user_id = $this->input->post('user_id');
 
-		// todo: need to change, only permitted data be retrived
 		$this->users_model->delete($user_id);
-		//add_log("/Users/Delete, id:" . $user_id, USERLOG_DELETE_EVENT);
 	}
 
 	public function ajax_randomPassword() {
