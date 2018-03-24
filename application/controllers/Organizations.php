@@ -146,8 +146,6 @@ class Organizations extends CI_Controller {
 				// delete old logo
 				$currentOrg = $this->organizations_model->read($organization_id);
 				$oldPath = "./" .UPLOAD_FOLDER. "/". $currentOrg["organization_logo"];
-
-				log_message("error", "hi, ".$oldPath);
 				
 				if(file_exists($oldPath) && $currentOrg){
 					$this->load->helper("file");

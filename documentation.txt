@@ -5,70 +5,45 @@ $config['base_url'] = 'http://localhost:31337/AceCIUser';
 
 database.php
 // change to your own database and user
-
 'hostname' => 'localhost:3306',
 'username' => 'johnuser',
 'password' => '123',
 'database' => 'aceciuser'
 
-CREATE TABLE MyGuests (
-	id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-	email VARCHAR(50),
-	reg_date 	DATETIME
-)
-
-=========
-180320
-// update database structure
-
-设计一个能搞坏query builder的测试流程
-检验organization？
-	1. 用到了filter, 登录用户< admin
-	如果session里没有organization，就会重新登录。
-	customer, read datatable
-	
-	流程： 登录manager，remember me，打开customer， 清空session，刷新
-	
-	2. 创建Users_model的时候， 要读get_user_group_level()， 就要读get_user_id。如果失去session，就要创建Users_model……死循环。
-	这里不是mess up的问题
-	登录manager, remember me, 打开users, 清空session刷新
-	
-	用静态function能否解决？不需要constructor，这里不能用filter(静态也没法用filter)
-	静态需要先load model(如果是在helper的function里)，可以autoload
-	myself model需要filter吗？不需要，永远是myself，权限只有自己
-	
-
-	
-180321
-restructure user model?
-不能把get_xxxx的代码移出constructor，因为query builder会被搞乱
-用self model? 也会被搞乱？
-
+----------------------------
 
 asset
 	copy useful js, put together, rename
 views
 	ace_user/inc_asset.php
 	ace_user/inc_full_asset.php
+	- solve them later
 	
 helpers - 
-	ACU_varibles_helper, ACU_helper
+	User_email_helper.php
+	User_utilities_helper.php
+	User_variables_helper.php
+	
 models
-	users, user_groups
+	organizations_model.php
+	users_model.php
+	user_groups_model.php
+	
 hooks
-	ACU_ManageAuth
+	UserAuth.php
 	
 libraries
-	不要lib，全部移到代码内
+	nothing
+	
 config
-	hooks.php 修改变量
+	hooks.php - need to modify
+	$config['enable_hooks'] = TRUE;
+	session, cookie, database
 
-
-试着把model的$db做成静态的
-
-安装mailgun
-composer require mailgun/mailgun-php php-http/guzzle6-adapter php-http/message
-on project root
-restart php
-config里面的session和cookie要加载
-$config['enable_hooks'] = TRUE;
+install mailgun
+	(if its covering to a existing project, need to:)
+	need a composer installed
+	open cmd, redirect to project root(the "index.php" directory)
+	run command:
+		composer require mailgun/mailgun-php php-http/guzzle6-adapter php-http/message
+	

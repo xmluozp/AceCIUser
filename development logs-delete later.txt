@@ -1,0 +1,29 @@
+
+=========
+180320
+// update database structure
+
+设计一个能搞坏query builder的测试流程
+检验organization？
+	1. 用到了filter, 登录用户< admin
+	如果session里没有organization，就会重新登录。
+	customer, read datatable
+	
+	流程： 登录manager，remember me，打开customer， 清空session，刷新
+	
+	2. 创建Users_model的时候， 要读get_user_group_level()， 就要读get_user_id。如果失去session，就要创建Users_model……死循环。
+	这里不是mess up的问题
+	登录manager, remember me, 打开users, 清空session刷新
+	
+	用静态function能否解决？不需要constructor，这里不能用filter(静态也没法用filter)
+	静态需要先load model(如果是在helper的function里)，可以autoload
+	myself model需要filter吗？不需要，永远是myself，权限只有自己
+	
+
+	
+180321
+restructure user model?
+不能把get_xxxx的代码移出constructor，因为query builder会被搞乱
+用self model? 也会被搞乱？
+
+
