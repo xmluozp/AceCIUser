@@ -1,49 +1,74 @@
-config.php
-// change to your base url
-$config['base_url'] = 'http://localhost:31337/AceCIUser';
-
-
-database.php
-// change to your own database and user
-'hostname' => 'localhost:3306',
-'username' => 'johnuser',
-'password' => '123',
-'database' => 'aceciuser'
 
 ----------------------------
+todo:
 
-asset
+Asset
 	copy useful js, put together, rename
-views
+Views
 	ace_user/inc_asset.php
 	ace_user/inc_full_asset.php
 	- solve them later
 	
-helpers - 
+----------------------------
+How do I user the Ace CI User with my project?
+
+Helpers - 
 	User_email_helper.php
 	User_utilities_helper.php
 	User_variables_helper.php
 	
-models
+Models
 	organizations_model.php
 	users_model.php
 	user_groups_model.php
 	
-hooks
+Hooks
 	UserAuth.php
 	
-libraries
+Libraries
 	nothing
 	
-config
-	hooks.php - need to modify
-	$config['enable_hooks'] = TRUE;
-	session, cookie, database
 
-install mailgun
+
+Install mailgun
 	(if its covering to a existing project, need to:)
 	need a composer installed
 	open cmd, redirect to project root(the "index.php" directory)
 	run command:
 		composer require mailgun/mailgun-php php-http/guzzle6-adapter php-http/message
+
+----------------------------
+
+
+Config/config.php
+	change to your base url
+		$config['base_url'] = 'http://localhost:31337/AceCIUser';
+	turn on hooks
+		$config['enable_hooks'] = TRUE;
+	some autoloads have to be there
+		session, cookie, database
+	
+Config/hooks.php
+	copy the content of hooks.php file to your project
+
+Config/constants.php
+	copy all settings in "----Ace CI User----"
+	
+Config/database.php
+	database has to be set, for example:
+		'hostname' => 'localhost:3306',
+		'username' => 'johnuser',
+		'password' => '123',
+		'database' => 'aceciuser'
+
+Run PHP
+		
+Open /aceciuser_setting.php
+	hit the button, generate the tables
+	
+Open index.php/users/view_login.php
+	Its the first page of a web-app: login page. redirect your home to here!
+	For example, modify your config/routes.php
+	$route['default_controller'] = 'users/view_login';
+	
 	
