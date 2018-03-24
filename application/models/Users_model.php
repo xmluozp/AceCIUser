@@ -11,7 +11,6 @@ class Users_model extends CI_Model {
 	{
 		parent::__construct();
 		
-		$this->load->database();
 		self::$db = &get_instance()->db;
 		self::$mainTableName = TABLE_USER;
 		

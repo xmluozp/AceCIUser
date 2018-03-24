@@ -15,10 +15,8 @@ class Organizations extends CI_Controller {
 
 		$this->load->helper('form');
 		$this->load->helper('url');
-		$this->load->helper('cookie');
 		
 		$this->load->helper('User_email');
-		$this->load->helper('User_utilities');
 		$this->load->helper('User_variables');		
 	}
 

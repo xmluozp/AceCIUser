@@ -104,4 +104,9 @@ defined('NORMAL_USER')      	OR define('NORMAL_USER', 1);
 defined('ADMINISTRATOR')      	OR define('ADMINISTRATOR', 2);
 
 defined('LOGIN_REDIRECTION')    OR define('LOGIN_REDIRECTION', 'users/view_login_success');
+
+// The permission error message page which have to be permission-free, avoid any permission check.
+// format here please be: ControllerName/FunctionName; Case insensitive
+defined('NO_PERMISSION_ERROR_PAGE')    OR define('NO_PERMISSION_ERROR_PAGE', 'users/func_kick_out');
+
 //-------------------------------------------------------------------------

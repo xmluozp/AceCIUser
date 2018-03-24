@@ -9,9 +9,7 @@ class UserAuth {
 	public function __construct() {
 		
 		$this->CI = &get_instance();
-		
 		$this->CI->load->helper('User_email');
-		$this->CI->load->helper('User_utilities');
 		$this->CI->load->helper('User_variables');	
 		
 		// set auth in helper, just make codes together
@@ -29,20 +27,23 @@ class UserAuth {
 
 		$className = strtoupper($this->CI->router->fetch_class());
 		$functionName = strtoupper($this->CI->router->fetch_method());
-
+		
+		// The destination of kick out should be a permission-free page
+		$isAlreadyKickedOut = $className ."/".$functionName == strtoupper(NO_PERMISSION_ERROR_PAGE);
+		
 		// check user group, if its a locked account, the user group is GUEST
-		if(!$this->checkAuth($className, $functionName)){
+		if(!$isAlreadyKickedOut || !$this->checkAuth($className, $functionName)){
 
 			$errorMessage = rawurlencode("No permission");
 
 			if($this->CI->input->is_ajax_request())
 			{
-				$redirectString = "<!DOCTYPE html><html><head><meta http-equiv=\"Refresh\" content=\"0;url=".site_url("/Users/func_kick_out/"). $errorMessage ."\"></head></html>";
+				$redirectString = "<!DOCTYPE html><html><head><meta http-equiv=\"Refresh\" content=\"0;url=".site_url(NO_PERMISSION_ERROR_PAGE."/"). $errorMessage ."\"></head></html>";
 				echo $redirectString;
 			}
 			else
 			{
-				redirect('/Users/func_kick_out/' . $errorMessage);
+				redirect(NO_PERMISSION_ERROR_PAGE."/" . $errorMessage);
 			}
 			die();
 		}
