@@ -3,7 +3,7 @@
 todo:
 
 Asset
-	copy useful js, put together, rename
+	Copy useful js, put together, rename
 Views
 	ace_user/inc_asset.php
 	ace_user/inc_full_asset.php
@@ -12,78 +12,102 @@ Views
 ----------------------------
 How do I user the Ace CI User with my project?
 
-Helpers - 
-	User_email_helper.php
-	User_utilities_helper.php
-	User_variables_helper.php
-	
-Models
-	organizations_model.php
-	users_model.php
-	user_groups_model.php
-	
-Hooks
-	UserAuth.php
-	
-Libraries
-	nothing
+require those new files:
 
-Install Mailgun
-	(if its covering to a existing project, need to:)
-	need a composer installed
-	open cmd, redirect to project root(the "index.php" directory)
-	run command:
-		composer require mailgun/mailgun-php php-http/guzzle6-adapter php-http/message
-
+	Helpers/ - 
+		User_email_helper.php
+		User_utilities_helper.php
+		User_variables_helper.php
+		
+	Models/
+		organizations_model.php
+		users_model.php
+		user_groups_model.php
+		
+	Controllers/
+		Organizations.php
+		Users.php
+		
+	Hooks
+		UserAuth.php	
+		
+	Views/users/
+		All
+		
+	/Assets
+		All, css, js, pictures and so on
+		
+	/uploads
+		Create this folder for upload logos of organization()
+			error.png
+			logo.png
+	
+	/vendor
+		All, or...
+			Install Mailgun	
+			(if its covering to a existing project, need to:)
+			need a composer installed
+			open cmd, redirect to project root(the "index.php" directory)
+			run command:
+				composer require mailgun/mailgun-php php-http/guzzle6-adapter php-http/message
+	
+----------------------------
 Make Mailgun work
-	see mailgun website
+	See mailgun website
 	Set your mail service key
 		Helpers/User_email_helper.php	
 ----------------------------
 Then we need configurations to make it work:
 
-Config/config.php
-	change to your base url
-		$config['base_url'] = 'http://localhost:31337/AceCIUser';
-	turn on hooks
-		$config['enable_hooks'] = TRUE;
-	some autoloads have to be there
-		session, cookie, database
-	
-Config/hooks.php
-	copy the content of hooks.php file to your project
+	Config/config.php
+		Change to your base url
+			$config['base_url'] = 'http://localhost:31337/AceCIUser';
+		Turn on hooks
+			$config['enable_hooks'] = TRUE;
+		Some autoloads have to be there
+			session, cookie, database
+		
+	Config/hooks.php
+		Copy the content of hooks.php file to your project
 
-Config/constants.php
-	copy all settings in "----Ace CI User----"
-	
-Config/database.php
-	database has to be set, for example:
-		'hostname' => 'localhost:3306',
-		'username' => 'johnuser',
-		'password' => '123',
-		'database' => 'aceciuser'
+	Config/constants.php
+		Copy all settings in "----Ace CI User----"
+		
+	Config/database.php
+		Database has to be set, for example:
+			'hostname' => 'localhost:3306',
+			'username' => 'johnuser',
+			'password' => '123',
+			'database' => 'aceciuser'
 
-Helpers/User_variables_helper.php
-	Here to set your project functions work with role system
-	The first function, variables_get_auth(), has to be set. Its a list of permissions. Anyone without permission will be kicked out.
-	There are 4 arguments.
-		1: the role level, not id
-		2: the Controller name needs to be checked
-		3: the Function name to be checked, * is wildcard means all functions in this controller. The wildcard checking has lower priority.
-		4: operator, could be =, >, <, >=, <=
-	For example, $returnValue[] = array(VISITOR, "Users","*", ">=");
-		means any one want to run any function in Users, has to be a VISITOR or higher(VISITOR here is 0 level, means everyone)
-	
+	Helpers/User_variables_helper.php
+		Here to set your project functions work with role system
+		The first function, variables_get_auth(), has to be set. Its a list of permissions. Anyone without permission will be kicked out.
+		There are 4 arguments.
+			1: The role level, not id
+			2: The Controller name needs to be checked
+			3: The Function name to be checked, * is wildcard means all functions in this controller. The wildcard checking has lower priority.
+			4: Operator, could be =, >, <, >=, <=
+		For example, $returnValue[] = array(VISITOR, "Users","*", ">=");
+			Means any one want to run any function in Users, has to be a VISITOR or higher(VISITOR here is 0 level, means everyone)
 	
 ----------------------------
-Run PHP
+Then generate database and go
+
+	Run PHP
+			
+	Open the page /aceciuser_setting.php
+		Hit the button, generate the tables
 		
-Open /aceciuser_setting.php
-	hit the button, generate the tables
-	
-Open index.php/users/view_login.php
-	Its the first page of a web-app: login page. redirect your home to here!
-	For example, modify your config/routes.php
-	$route['default_controller'] = 'users/view_login';
-	
-	
+	Open the page index.php/users/view_login.php
+		You can set it as the first page of your app.
+		For example, edit your config/routes.php
+		$route['default_controller'] = 'users/view_login';
+
+
+
+		
+----------------------------	
+	For additional, you can customize your navigation bar for different user groups
+
+

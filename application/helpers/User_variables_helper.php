@@ -34,28 +34,28 @@ function variables_get_navigation_permissions()
 	
 	$returnValue = array();
 	
-	$returnValue["0"] = array(
-		"GroupName"	  => "Guest",
+	//The index here is the user group ID, not the level. But right now we set them as the same value for convinience.
+	// VISITOR
+	$returnValue[0] = array(
 		"Extended"	  => array(),
-		"Permissions" => array(
-			
+		"NavigationList" => array(
 		)	
 	);
 	
-	$returnValue["1"] = array(
-		"GroupName"	  => "Guest",
+	// NORMAL USER
+	$returnValue[1] = array(
 		"Extended"	  => array(),
-		"Permissions" => array(
+		"NavigationList" => array(
 			"home",
 			"usr","usr01",
 			"org"
 		)	
 	);
 	
-	$returnValue["2"] = array(
-		"GroupName"	  => "Guest",
+	// ADMIN
+	$returnValue[2] = array(
 		"Extended"	  => array("1"),
-		"Permissions" => array()	
+		"NavigationList" => array()	
 	);
 	
 	return $returnValue;

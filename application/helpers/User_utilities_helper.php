@@ -2,7 +2,7 @@
 //================================================================ Global current user variables
 	/**
 	 * will be used everywhere when need a current user's id or other information
-	 * if its empty, will try to renew the login status by token
+	 * if its empty, will try to renew the login status by token.
 	 */
 	function get_user_id()
 	{
@@ -205,8 +205,9 @@
 		$ci =& get_instance();
 		$ci->load->model("users_model");
 		
-		// match the token
-		$getTokenKey = Users_model::get_tokenKey($token);
+		// match the token with key.
+		/* Right now the token is saved in the Users table as a column. Actually it can be a new table*/
+		$getTokenKey = Users_model::get_tokenKey($token); 
 		$tokenArray = Token::decode_token($token, $getTokenKey);
 
 		// get user from token payload
@@ -284,32 +285,26 @@
 	 * get all permissions for current login user, will be called for build the navigation bar
 	 * @return array
 	 */
-	function get_my_navigation_permissions()
+	function get_my_navigation_from_permissions()
 	{
-		$user_id = get_user_id();
+		$userGroupId = get_user_group_id();
+		$userGroupPermissions = array();
+		$permissions_all = variables_get_navigation_permissions();
+	
+		// get permissions from the user group
+		if(array_key_exists($userGroupId, $permissions_all))
+		{
+			$userGroup = $permissions_all[$userGroupId];
+			$userGroupPermissions = $userGroup["NavigationList"];
 
-		if(!$user_id)
-		{
-			$userGroupId = VISITOR;
-		}
-		else
-		{
-			$userGroupId = get_user_group_id($user_id);
+			// get extends from the user group,  get permissions from extend, remove repeating fields(union arrays)
+			foreach ($userGroup["Extended"] as $grpId)
+			{
+				$userGroupPermissions = array_merge($userGroupPermissions, $permissions_all[$grpId]["NavigationList"]);
+				//$userGroupPermissions += $permissions_all[$grpId]["Permissions"];
+			};
 		}
 		
-		$permissions_all = variables_get_navigation_permissions();
-
-		// get permissions from the user group
-		$userGroup = $permissions_all[(string)$userGroupId];
-		$userGroupPermissions = $userGroup["Permissions"];
-
-		// get extends from the user group,  get permissions from extend, remove repeating fields(union arrays)
-		foreach ($userGroup["Extended"] as $grpId)
-		{
-			$userGroupPermissions = array_merge($userGroupPermissions, $permissions_all[$grpId]["Permissions"]);
-			//$userGroupPermissions += $permissions_all[$grpId]["Permissions"];
-		};
-
 		return $userGroupPermissions;
 	}
 
@@ -322,7 +317,7 @@
 		$nav = variables_get_navigation();
 		
 		// get permit codes allowed for current user
-		$myPermissions = get_my_navigation_permissions();
+		$myPermissions = get_my_navigation_from_permissions();
 
 		// filter permissions: remove all permissions not allowed
 		foreach($nav as $navKey => $navItem)
@@ -376,10 +371,10 @@
 		return $decode_string;
 	}
 
+	// Not using this for user system.
 	function enum_join_statement($db, $table, $column)
 	{
 		$db->join('enum', '(enum_dir = "'. $table .'/'. $column.'") AND ('.$column.' = enum.enum_code)', 'left');
-		//return '(enum_dir = "'. $table .'/'. $column.'") AND ('.$column.' = enum.enum_code)';
 	}
 
 	function func_run_with_ajax($form){
@@ -418,7 +413,7 @@
 		return $ajax_return;
 	}
 	
-	/// get user group id from user id.
+	/// Get user group id from user id. Work with JQuery plugin: Datatables
 	function helper_datatable_varibles($gets)
 	{
 		// sanitizing
@@ -455,8 +450,7 @@
 		return $datatable_varibles;
 	}
 
-
-
+	// work with JQuery plugin: Datatables
 	function helper_datatable_db($db, $tableName, $datatable_paging)
 	{
 		$sql = $db->get_compiled_select();
