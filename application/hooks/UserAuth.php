@@ -11,6 +11,7 @@ class UserAuth {
 		$this->CI = &get_instance();
 		$this->CI->load->helper('User_email');
 		$this->CI->load->helper('User_variables');	
+		$this->CI->load->helper('Url');	
 		
 		// set auth in helper, just make codes together
 		$authArray = variables_get_auth();

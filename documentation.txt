@@ -110,7 +110,12 @@ Then generate database and go
 ----------------------------	
 For additional
 
-	you can customize your navigation bar for different user groups. (if you dont have your own navigation bar)
+	About Captcha
+		The constant LOGIN_ATTEMPTING_LIMIT is the login try times before the Captcha occured. Right now is 2 just for testing purpose.
+		Please at least set it to 5.
+		There are some other picture generate settings in Captcha.php
+
+	You can customize your navigation bar for different user groups. (if you dont have your own navigation bar)
 		It's in
 			Helpers/User_variables_helper.php
 				variables_get_navigation()
