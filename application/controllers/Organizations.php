@@ -145,7 +145,7 @@ class Organizations extends CI_Controller {
 				$currentOrg = $this->organizations_model->read($organization_id);
 				$oldPath = "./" .UPLOAD_FOLDER. "/". $currentOrg["organization_logo"];
 				
-				if(file_exists($oldPath) && $currentOrg){
+				if(file_exists($oldPath) && !is_dir($oldPath)){
 					$this->load->helper("file");
 					unlink($oldPath);
 				}					
@@ -180,7 +180,16 @@ class Organizations extends CI_Controller {
 	{
 		$organization_id = $this->input->post('organization_id');
 
+		// delete old logo
+		$currentOrg = $this->organizations_model->read($organization_id);
+		$oldPath = "./" .UPLOAD_FOLDER. "/". $currentOrg["organization_logo"];
+						
 		$this->organizations_model->delete($organization_id);
+		
+		if(file_exists($oldPath) && !is_dir($oldPath)){
+			$this->load->helper("file");
+			unlink($oldPath);
+		}
 	}
 
 	public function ajax_temp_join()

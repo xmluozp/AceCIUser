@@ -80,7 +80,7 @@
 	$(document).on('click', '.delete_button', function() {
 
 		id = $(this).parent().parent().attr("data-id");
-		displayName = ($(this).parent().siblings().get(1)).innerText;
+		displayName = ($(this).parent().siblings().get(2)).innerText;
 
 		$.confirm({
 			title: 'Confirm',
@@ -94,7 +94,6 @@
 			}
 		});
 	});
-
 
 	$(document).on('click', '#toolButtons_filter', function() {
 		id = $(this).parent().parent().attr("data-id");

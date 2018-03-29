@@ -90,11 +90,12 @@ if($_POST)
 	$query =  "INSERT INTO " . $org_table."(organization_id, organization_name) VALUES(1, 'Ace Space');";
 	$query .=  "INSERT INTO " . $org_table."(organization_id, organization_name) VALUES(2, 'Red River College');";
 	
-	$query .=  "INSERT INTO " . $user_table."(user_email, user_password, user_group_id) VALUES('administrator@aceciuser.none', :adminPassword, 2);";
 	
 	$query .=  "INSERT INTO ".$role_table. "(user_group_id, user_group_name,user_group_level) VALUES(0, 'Visitor', 0);";
 	$query .=  "INSERT INTO ".$role_table. "(user_group_id, user_group_name,user_group_level) VALUES(1, 'Normal User', 1);";
 	$query .=  "INSERT INTO ".$role_table. "(user_group_id, user_group_name,user_group_level) VALUES(2, 'Administrator', 2);";
+	
+	$query .=  "INSERT INTO " . $user_table."(user_email, user_password, user_group_id, organization_id) VALUES('administrator@aceciuser.none', :adminPassword, 2, 1);";
 	
 	$statement = $db->prepare($query);
 	
