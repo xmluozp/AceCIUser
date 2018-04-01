@@ -1,14 +1,3 @@
-<style>
-
-	body{
-		background-image: url("<?php echo base_url('assets/images/bg.jpg');?>");
-		background-repeat: no-repeat;
-		background-size: 100% 100%;
-		background-color: #000000;
-	}
-</style>
-
-
 <link href="<?php echo base_url('assets/css/guest_style.css');?>" rel="stylesheet">
 
 <div class="logo_large">

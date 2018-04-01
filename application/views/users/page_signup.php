@@ -1,23 +1,24 @@
-<style>
-
-	body{
-		background-image: url("<?php echo base_url('assets/images/bg.jpg');?>");
-		background-repeat: no-repeat;
-		background-size: 100% 100%;
-		background-color: #000000;
-	}
-</style>
-
-
-<div class="logo_large">
-<img src="<?php echo base_url('assets/images/logo_lg.png');?>">
+<div class="row page-heading bg-light">
+<div class="col page-title"><h2><?php echo $title; ?></h2></div>
 </div>
 
 <div class="login_panel">
 	<div class="modal-content">
 		<?php echo form_open('users/form_signup', array('autocomplete' => 'off', 'id' => 'signup_form')); ?>
 		<div class="modal-body">
-
+		
+				<div class="progress" style="margin-bottom: 20px;">
+					<div class="progress-bar progress-bar-striped bg-warning" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+						1/2
+					</div>
+				</div>
+				
+				<div class="card-body">
+					<h5 class="card-title">Sign Up:</h5>
+					<p class="card-text">
+						1. Enter your email and password.<br/> 2. Active your account from your email.
+					</p>
+				</div>
 
 				<?php if($errorMessages):?>
 

@@ -68,8 +68,12 @@ class UserAuth {
 	function checkAuth($className, $functionName)
 	{
 		$returnValue = false;
+		
+		// key point of permission checking, codes are in Helpers/User_utilities_helper.php
 		$user_group_id = get_user_group_id();
 		$user_group_level = get_user_group_level();
+		// ------------------------------------
+		
 		$permissionList = array();
 
 		// if its a locked account, user group is guest

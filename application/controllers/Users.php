@@ -210,9 +210,10 @@ class Users extends CI_Controller {
 		$data['title'] = 'User Signup';
 		$data['errorMessages'] = $errorMessages;
 		$data['json_error'] = $json_error;
+		$data['nav'] = get_nav();
 
 		$this->load->view('users/inc_header', $data);
-		$this->load->view('users/inc_full_asset', $data);
+		$this->load->view('users/inc_navigation');
 		$this->load->view('users/page_signup', $data);
 		$this->load->view('users/inc_footer');
 	}	
@@ -252,7 +253,7 @@ class Users extends CI_Controller {
 
 		$this->form_validation->set_rules('user_password', 'password', 'required|trim|callback_validate_match_password');
 		$this->form_validation->set_rules('user_confirm', 'password', 'required|trim|callback_validate_match_password');
-		$this->form_validation->set_message('validate_match_password', 'Your password has to be match.');
+		$this->form_validation->set_message('validate_match_password', 'Your password has to be matched.');
 		
 		$validation_result = func_run_with_ajax($this->form_validation);
 	
@@ -287,8 +288,10 @@ class Users extends CI_Controller {
 				$data['type'] = 1;
 				$data['title'] = "Account Created";
 				$data['messages'] = 'Your account has been created. Please active your account.';	
+				$data['nav'] = get_nav();
 				
 				$this->load->view('users/inc_header', $data);
+				$this->load->view('users/inc_navigation');
 				$this->load->view('users/inc_full_asset', $data);
 				$this->load->view('users/page_message', $data);
 				$this->load->view('users/inc_footer');
@@ -302,12 +305,12 @@ class Users extends CI_Controller {
 		$data['title'] = 'User Active';
 		$data['type'] = 1;
 		$data['messages'] = '';	
+		$data['nav'] = get_nav();
 		
 		if($result)
 		{		
 			$data['type'] = 1;
 			$data['messages'] = 'Active Successed';
-			$data['nav'] = get_nav();
 		}
 		else
 		{
@@ -316,11 +319,7 @@ class Users extends CI_Controller {
 		}
 		
 		$this->load->view('users/inc_header', $data);
-		if($result)
-		{
-			$this->load->view('users/inc_navigation');
-		}
-		
+		$this->load->view('users/inc_navigation');
 		$this->load->view('users/inc_full_asset', $data);
 		$this->load->view('users/page_message', $data);
 		$this->load->view('users/inc_footer');
@@ -459,7 +458,7 @@ class Users extends CI_Controller {
 		$this->form_validation->set_rules('user_password', 'password', 'required|trim|callback_validate_match_password');
 		$this->form_validation->set_rules('user_confirm', 'password', 'required|trim|callback_validate_match_password');
 		
-		$this->form_validation->set_message('validate_match_password', 'Your password has to be match.');
+		$this->form_validation->set_message('validate_match_password', 'Your password has to be matched.');
 
 		$validation_result = func_run_with_ajax($this->form_validation);
 	
@@ -572,29 +571,6 @@ class Users extends CI_Controller {
 		}
 	}
 
-	/**
-	 * The only entrance is right side of navigation bar, will be logout and clear the "remember me"
-	 */
-	public function func_logout()
-	{
-		$this->session->sess_destroy();	
-		delete_cookie("token","");
-		
-		// clear token from database
-		$this->users_model->update_delete_token(get_user_id());
-		$this->view_login();
-	}
-	
-	public function func_kick_out($message)
-	{
-		$this->session->sess_destroy();	
-		delete_cookie("token","");
-		
-		// clear token from database
-		$this->users_model->update_delete_token(get_user_id());
-		$this->view_login($message);
-	}
-
 	private function func_sendResetPasswordEmail($user_email, $callback_base_url)
 	{
 		// generate a new password for this user
@@ -624,6 +600,27 @@ class Users extends CI_Controller {
 
 		// call function in Email_helper
 		send_email($email);
+	}
+	
+	/**
+	 * The only entrance is right side of navigation bar, will be logout and clear the "remember me"
+	 */
+	public function func_logout()
+	{
+		// clear token from database
+		$this->users_model->update_delete_token(get_user_id());
+		clear_token();
+
+		$this->view_login();
+	}
+	
+	public function func_kick_out($message)
+	{
+		clear_token();
+		
+		// clear token from database
+		$this->users_model->update_delete_token(get_user_id());
+		$this->view_login($message);
 	}
 
 	/**

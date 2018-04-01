@@ -14,36 +14,36 @@ How do I user the Ace CI User with my project?
 
 require those new files:
 
-	Helpers/ - 
+	/application/Helpers/ - 
 		User_email_helper.php
 		User_utilities_helper.php
 		User_variables_helper.php
 		
-	Models/
+	/application/Models/ -
 		organizations_model.php
 		users_model.php
 		user_groups_model.php
 		
-	Controllers/
+	/application/Controllers/ -
 		Organizations.php
 		Users.php
 		
-	Hooks
+	/application/Hooks -
 		UserAuth.php	
 		
-	Views/users/
+	/application/Views/users/ -
 		All
 		
-	/Assets
+	/Assets/
 		All, css, js, pictures and so on
 		
-	/uploads
+	/uploads/
 		Create this folder for upload logos of organization()
 			error.png
 			logo.png
 	
-	/vendor
-		All, or...
+	/Vendor/
+		Copy all, or...
 			Install Mailgun	
 			(if its covering to a existing project, need to:)
 			need a composer installed

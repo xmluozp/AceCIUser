@@ -7,21 +7,28 @@
 function variables_get_auth()
 {
 	$returnValue = array();
-	$returnValue[] = array(VISITOR, "Users","*", ">=");
+	
+	$returnValue[] = array(VISITOR, "Users","*", ">");
+	
+	// The functions can accessed by VISITORs:
 	$returnValue[] = array(VISITOR, "Users","view_forgot", "=");
 	$returnValue[] = array(VISITOR, "Users","view_forgot2", "=");
 	$returnValue[] = array(VISITOR, "Users","view_forgo3", "=");
+	$returnValue[] = array(VISITOR, "Users","form_forgot_sendEmail", "=");
+	$returnValue[] = array(VISITOR, "Users","form_forgot_changePassword", "=");
 
-	$returnValue[] = array(VISITOR,"Users","index", ">");
-	$returnValue[] = array(VISITOR,"Users","view_home", ">");
 	
-	$returnValue[] = array(VISITOR,"Users","ajax_update", ">");
-	$returnValue[] = array(VISITOR,"Users","ajax_create", ">");
-	$returnValue[] = array(VISITOR,"Users","ajax_switchActive",  ">");
-	$returnValue[] = array(VISITOR,"Users","ajax_userDelete",  ">");
-
-	$returnValue[] = array(VISITOR, "Users","ajax_userDetails",  ">");
-
+	$returnValue[] = array(VISITOR, "Users","view_login", ">=");
+	$returnValue[] = array(VISITOR, "Users","form_login", ">=");
+	$returnValue[] = array(VISITOR, "Users","view_login_success", ">=");
+	$returnValue[] = array(VISITOR, "Users","view_signup", ">=");
+	$returnValue[] = array(VISITOR, "Users","form_signup", ">=");
+	$returnValue[] = array(VISITOR, "Users","func_active", ">=");
+	
+	$returnValue[] = array(VISITOR, "Users","view_login", ">=");
+	
+	
+	
 	return $returnValue;
 }
 

@@ -8,18 +8,26 @@
 	{
 		$returnValue = 0;
 
-		if(isset($_SESSION['user_id']))
+		// check device
+		if (is_browser())
 		{
-			$returnValue = $_SESSION['user_id'];
+			if(isset($_SESSION['user_id']))
+			{
+				$returnValue = $_SESSION['user_id'];
+			}
+			elseif(isset($_COOKIE["token"]) && $_COOKIE["token"])
+			{
+				$returnValue = (continue_token($_COOKIE["token"]))["user_id"];
+			}
 		}
-		elseif(isset($_COOKIE["token"]) && $_COOKIE["token"])
+		else
 		{
-			$returnValue = (continue_token($_COOKIE["token"]))["user_id"];
+			// application version
 		}
-		
+			
 		return $returnValue;
 	}
-	
+	  	
 	function get_user_email()
 	{
 		$returnValue = "anonymous";
@@ -36,13 +44,16 @@
 	{
 		$returnValue = 0;
 
-		if(isset($_SESSION['organization_id']))
+		if (is_browser())
 		{
-			$returnValue = $_SESSION['organization_id'];
-		}
-		elseif(isset($_COOKIE["token"]) && $_COOKIE["token"])
-		{
-			$returnValue = (continue_token($_COOKIE["token"]))["organization_id"];
+			if(isset($_SESSION['organization_id']))
+			{
+				$returnValue = $_SESSION['organization_id'];
+			}
+			elseif(isset($_COOKIE["token"]) && $_COOKIE["token"])
+			{
+				$returnValue = (continue_token($_COOKIE["token"]))["organization_id"];
+			}
 		}
 
 		return $returnValue;
@@ -72,6 +83,7 @@
 	{
 		$result = $result = get_organization();
 		$returnValue= $result ? $result->organization_logo : DEFAULT_LOGO;	
+		$returnValue= $returnValue ? $returnValue : DEFAULT_LOGO;	
 		
 		return "uploads/". $returnValue;
 	}	
@@ -176,15 +188,16 @@
 				$tokenString = generate_token($user->user_id, $tokenKey);
 			}
 		
-			// what will be stored in session
-			$userData = array(
-				'user_id' => $user->user_id,
-				'user_email' => $user_email,
-				'user_group_name' => $user->user_group_name,
-				'organization_id' => $user->organization_id,
-			);
-			$ci->session->set_userdata($userData);
-
+			if (is_browser()){
+				// what will be stored in session
+				$userData = array(
+					'user_id' => $user->user_id,
+					'user_email' => $user_email,
+					'user_group_name' => $user->user_group_name,
+					'organization_id' => $user->organization_id,
+				);
+				$ci->session->set_userdata($userData);
+			}
 			// update database login information, including token
 			Users_model::update_the_token($user->user_id, $tokenString, $tokenKey);
 
@@ -223,15 +236,16 @@
 			$tokenKey = generate_tokenKey() ; //generate_tokenKey();
 			$tokenString = generate_token($tokenArray["uid"], $tokenKey);
 
-			$userData = array(
-				'user_id' => $user_id,
-				'user_email' => $user->user_email,
-				'user_group_name' => $user->user_group_name,
-				'organization_id' => $user->organization_id,
-			);
+			if (is_browser()){
+				$userData = array(
+					'user_id' => $user_id,
+					'user_email' => $user->user_email,
+					'user_group_name' => $user->user_group_name,
+					'organization_id' => $user->organization_id,
+				);
 
-			$ci->session->set_userdata($userData);
-
+				$ci->session->set_userdata($userData);
+			}
 			Users_model::update_the_token($user->user_id, $tokenString, $tokenKey);
 			return array("user_id" => $user_id, "organization_id" => $user->organization_id);
 		}
@@ -240,7 +254,16 @@
 			return array("user_id" => 0, "organization_id" => 0);
 		}
 	}
-
+	
+	function clear_token()
+	{
+		if (is_browser()){
+			$ci =& get_instance();
+			$ci->session->sess_destroy();	
+			delete_cookie("token","");
+		}
+	}
+	
 	/**
 	 * called by above functions, generate a token then set it to the cookie
 	 * @param $uid
@@ -257,8 +280,15 @@
 			'uid'=> $uid
 		);
 		$tokenString = Token::encode_token($payload, $key);
-		setcookie("token", $tokenString, time() + Token::token_expiry(), "/");
-
+		
+		if (is_browser()){
+			setcookie("token", $tokenString, time() + Token::token_expiry(), "/");
+		}
+		else
+		{
+			//todo: put in mobile
+		}
+		
 		return $tokenString;
 	}
 
@@ -345,6 +375,13 @@
 	}
 
 //================================================================ Tools
+	function is_browser()
+	{
+		$ci =& get_instance();	
+		$ci->load->library('user_agent');
+		return $ci->agent->is_browser();
+	}
+
 	function dateFormat($date)
 	{
 		$dateParsed = date_parse_from_format("MM j, yyyy", $date);
