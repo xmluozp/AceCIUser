@@ -2,32 +2,33 @@
 /**
  * Register the permission to role
  * user level (using constant variable here), class name, function name, operator
+ * Here every "Class name" should be the name of a controller
  * @return array
  */
 function variables_get_auth()
 {
 	$returnValue = array();
 	
-	$returnValue[] = array(VISITOR, "Users","*", ">");
-	
-	// The functions can accessed by VISITORs:
+	// Functions can be accessed by VISITORs:
 	$returnValue[] = array(VISITOR, "Users","view_forgot", "=");
 	$returnValue[] = array(VISITOR, "Users","view_forgot2", "=");
 	$returnValue[] = array(VISITOR, "Users","view_forgo3", "=");
 	$returnValue[] = array(VISITOR, "Users","form_forgot_sendEmail", "=");
-	$returnValue[] = array(VISITOR, "Users","form_forgot_changePassword", "=");
-
-	
+	$returnValue[] = array(VISITOR, "Users","form_forgot_changePassword", "=");	
 	$returnValue[] = array(VISITOR, "Users","view_login", ">=");
 	$returnValue[] = array(VISITOR, "Users","form_login", ">=");
 	$returnValue[] = array(VISITOR, "Users","view_login_success", ">=");
+	// - Sign up
 	$returnValue[] = array(VISITOR, "Users","view_signup", ">=");
 	$returnValue[] = array(VISITOR, "Users","form_signup", ">=");
 	$returnValue[] = array(VISITOR, "Users","func_active", ">=");
-	
 	$returnValue[] = array(VISITOR, "Users","view_login", ">=");
+
+	// Permissions of User functions
+	$returnValue[] = array(VISITOR, "Users","*", ">");
 	
-	
+	// Permissions of Organization functions
+	$returnValue[] = array(ADMINISTRATOR, "Organizations","*", ">=");
 	
 	return $returnValue;
 }
