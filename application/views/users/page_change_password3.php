@@ -27,13 +27,13 @@
 					   placeholder="Enter email" style="background: rgba(255, 255, 255, 0.3);" value="<?=rawurldecode($user_email)?>">
 
 
-				<input type="hidden" class="form-control" data-validation autocomplete="off" name="user_reset_password"
-					   id="user_reset_password" placeholder="varification code" style="background: rgba(255, 255, 255, 0.3);"
-					   value="<?=rawurldecode($user_reset_password)?>">
+				<input type="hidden" class="form-control" data-validation autocomplete="off" name="user_token_key"
+					   id="user_token_key" placeholder="varification code" style="background: rgba(255, 255, 255, 0.3);"
+					   value="<?=rawurldecode($user_token_key)?>">
 				<div class="form-group">
-					<label for="user_new_password">New Password</label>
-					<input type="password" class="form-control" data-validation autocomplete="off" name="user_new_password"
-						   id="user_new_password" placeholder="Password" style="background: rgba(255, 255, 255, 0.3);">
+					<label for="user_password">New Password</label>
+					<input type="password" class="form-control" data-validation autocomplete="off" name="user_password"
+						   id="user_password" placeholder="Password" style="background: rgba(255, 255, 255, 0.3);">
 				</div>
 				<div class="form-group">
 					<label for="user_confirm">Confirm Password</label>

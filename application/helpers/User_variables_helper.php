@@ -12,9 +12,9 @@ function variables_get_auth()
 	// Functions can be accessed by VISITORs:
 	$returnValue[] = array(VISITOR, "Users","view_forgot", "=");
 	$returnValue[] = array(VISITOR, "Users","view_forgot2", "=");
-	$returnValue[] = array(VISITOR, "Users","view_forgo3", "=");
+	$returnValue[] = array(VISITOR, "Users","view_forgot3", "=");
 	$returnValue[] = array(VISITOR, "Users","form_forgot_sendEmail", "=");
-	$returnValue[] = array(VISITOR, "Users","form_forgot_changePassword", "=");	
+	$returnValue[] = array(VISITOR, "Users","form_forgot_changePassword", ">=");	
 	
 	$returnValue[] = array(VISITOR, "Users","view_login", ">=");
 	$returnValue[] = array(VISITOR, "Users","form_login", ">=");

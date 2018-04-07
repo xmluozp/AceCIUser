@@ -17,11 +17,11 @@
 			<div class="form-row">
 				<div class="form-group col-md-6">
 					<label for="userDetailForm-organization_id">Ogranization</label>
-					<select data-validation type="text" class="form-control" style="width:100%;" name="organization_id" id="userDetailForm-user_detail_organization_id" placeholder="" autocomplete="off" tabindex="0"></select>
+					<select data-validation type="text" class="form-control" style="width:100%;" name="organization_id" id="userDetailForm-organization_id" placeholder="" autocomplete="off" tabindex="0"></select>
 				</div>
 				<div class="form-group col-md-6">
 					<label for="userDetailForm-user_group_id">User Group</label>
-					<select data-validation id="userDetailForm-user_group_id" class="form-control" name="user_group_id" data-render="edit_user_group_render">
+					<select data-validation id="userDetailForm-user_group_id" style="width:100%;" class="form-control" name="user_group_id" data-render="edit_user_group_render" tabindex="1">
 					</select>
 				</div>
 			</div>
@@ -85,7 +85,7 @@
 					</div>
 					<div class="form-group col-md-6">
 						<label for="userCreateForm-user_group_id">User Group</label>
-						<select data-validation id="userCreateForm-user_group_id" class="form-control" name="user_group_id" data-render="edit_user_group_render">
+						<select data-validation id="userCreateForm-user_group_id" style="width:100%;" class="form-control" name="user_group_id" data-render="edit_user_group_render" tabindex="1">
 						</select>
 					</div>
 				</div>
@@ -133,7 +133,7 @@
 	</div>
 
 <script>
-	selector_detail_organization_id = '#userDetailForm #userDetailForm-user_detail_organization_id';
+	selector_detail_organization_id = '#userDetailForm #userDetailForm-organization_id';
 	selector_detail_user_group_id = '#userDetailForm #userDetailForm-user_group_id';
 	selector_detailForm = '#userDetailForm';
 	selector_detailModal = '#userDetailModal';
@@ -147,22 +147,12 @@
 	// generate the Datatable and popup forms
 	$(document).ready(function() {
 
-		// initialize dropdownlists
-		read_dropdown(selector_detail_organization_id, <?php echo $organizations?>);
-		read_dropdown(selector_detail_user_group_id, <?php echo $user_groups?>);
-
-		read_dropdown(selector_create_organization_id, <?php echo $organizations?>);
-		read_dropdown(selector_create_user_group_id, <?php echo $user_groups?>);
-
 		// initialize the select12
-		detail_organization_dropdown = new $(selector_detail_organization_id).select2({
-			width : 'resolve',
-			dropdownAutoWidth : true
-		});
-		create_organization_dropdown = new $(selector_create_organization_id).select2({
-			width : 'resolve',
-			dropdownAutoWidth : true
-		});
+		select2_detail_organization = read_select2("#userDetailForm-organization_id", <?php echo $organizations?>);
+		select2_create_organization = read_select2("#userCreateForm-organization_id", <?php echo $organizations?>);
+	
+		select2_detail_usergroup = read_select2("#userDetailForm-user_group_id", <?php echo $user_groups?>);
+		select2_create_usergroup = read_select2("#userCreateForm-user_group_id", <?php echo $user_groups?>);
 
 		// initialize the Ajax submit
 		ajax_detailform = new ajax_validation(selector_detailForm, successDetailModal);

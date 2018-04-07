@@ -90,7 +90,7 @@ defined('EXIT__AUTO_MAX')      OR define('EXIT__AUTO_MAX', 125); // highest auto
 defined('TABLE_USER')   	  OR define('TABLE_USER', 'users');
 defined('TABLE_USER_GROUP')   OR define('TABLE_USER_GROUP', 'user_groups');
 defined('TABLE_ORG')   		  OR define('TABLE_ORG', 'organizations');
-
+defined('TABLE_TOKEN')   		  OR define('TABLE_TOKEN', 'user_tokens');
 
 defined('SUPER_ORGANIZATION')   OR define('SUPER_ORGANIZATION', 1);
 defined('LOGIN_ATTEMPTING_LIMIT')   OR define('LOGIN_ATTEMPTING_LIMIT', 2);
@@ -110,5 +110,14 @@ defined('LOGIN_REDIRECTION')    OR define('LOGIN_REDIRECTION', 'users/view_login
 // format here please be: ControllerName/FunctionName; Case insensitive
 defined('NO_PERMISSION_ERROR_PAGE')    OR define('NO_PERMISSION_ERROR_PAGE', 'users/func_kick_out');
 defined('DEFAULT_LOGO')     	OR define('DEFAULT_LOGO', "logo.png");
+
+// token types, dont change
+defined('TOKEN_TITLE')     	OR define('TOKEN_TITLE', 'Ace Space');
+defined('TOKEN_TYPE_LOGIN')     	OR define('TOKEN_TYPE_LOGIN', 0);
+defined('TOKEN_TYPE_CHANGE_PASSWORD')     	OR define('TOKEN_TYPE_CHANGE_PASSWORD', 1);
+defined('TOKEN_TYPE_ACTIVE_USER')     	OR define('TOKEN_TYPE_ACTIVE_USER', 2);
+
+
+
 
 //-------------------------------------------------------------------------

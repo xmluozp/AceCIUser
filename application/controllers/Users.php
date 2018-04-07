@@ -153,34 +153,22 @@ class Users extends CI_Controller {
 		$data['title'] = 'Success';
 		
 		$isActive = $this->users_model->check_active(get_user_id());
-		
-		if($isActive)
-		{
-			$data['welcome'] = "Welcome, " . get_user_email() . "<br/>";
-			$data['welcome'] .= "Your User Id is: " . get_user_id() . "<br/>";
-			$data['welcome'] .= "Your User group Id is: " . get_user_group_id() . "<br/>";
-			$data['welcome'] .= "Your User group Name is: " . get_user_group_name() . "<br/>";
-			$data['welcome'] .= "which is level " . get_user_group_level() . "<br/>";			
-			$data['welcome'] .= "your organization id is:" . get_organization_id() . "<br/>";					
-			$data['welcome'] .= "your organization name is:" . get_organization_name() . "<br/>";						
-			$data['welcome'] .= "your organization logo is:" . get_organization_logo() . "<br/>";				
-		}
-		else
-		{
-			$data['welcome'] = "Please active your account before you can use it";
-		}
-		
 		$data['nav'] = get_nav();
 		
 		$this->load->view('users/inc_header', $data);
-		
 		if($isActive)
 		{
+			
 			$this->load->view('users/inc_navigation');
+			$this->load->view('users/inc_full_asset', $data);
+			$this->load->view('users/page_home', $data);			
 		}
-		
-		$this->load->view('users/inc_full_asset', $data);
-		$this->load->view('users/page_home', $data);
+		else
+		{	
+			$this->load->view('users/inc_full_asset', $data);
+			$this->load->view('users/page_home_inactive', $data);	
+		}
+
 		$this->load->view('users/inc_footer');
 	}
 	
@@ -266,16 +254,16 @@ class Users extends CI_Controller {
 		else
 		{
 			
-			$data['user_active_code'] = generate_tokenKey();
+			$tokenKey_of_newuser = generate_tokenKey();
 			$data['user_password'] = password_hash($data['user_password'], PASSWORD_DEFAULT);
 
 			// send the form to proccessing code
-			$result = $this->users_model->create($data);
-
+			$result = $this->users_model->create_user_with_tokenKey($data, $tokenKey_of_newuser);
+			
 			if($result && $is_email_inform)
 			{
 			
-				$callback_url = site_url("users/func_active/" . $result . "/".$data['user_active_code']);
+				$callback_url = site_url("users/func_active/".$tokenKey_of_newuser);
 				
 				// The content be modified from User_variables_helper.php
 				$email['email_message'] = variables_emails("sign_up", $user_email, array($callback_url));			
@@ -299,23 +287,36 @@ class Users extends CI_Controller {
 		}
 	}	 
 	
-	public function func_active($id, $key)
+	public function func_active($key)
 	{
-		$result = $this->users_model->active($id, $key);
 		$data['title'] = 'User Active';
 		$data['type'] = 1;
 		$data['messages'] = '';	
 		$data['nav'] = get_nav();
 		
-		if($result)
-		{		
-			$data['type'] = 1;
-			$data['messages'] = 'Active Successed';
+		$key = rawurldecode($key);		
+		$token = $this->users_model->get_token_from_key($key);
+		
+		$user_id = $this->users_model->get_user_id_from_token_key($key);
+		
+
+		// try decode the token
+		$tokenDecoded = Token::decode_token($token, $key);
+			
+		if(!$tokenDecoded)
+		{			
+			$data['type'] = 0;
+			$data['messages'] = 'Request Expired';
+			
+			// delete the user
+			$this->users_model->delete($user_id);
 		}
 		else
 		{
-			$data['type'] = 0;
-			$data['messages'] = 'Active Failed';	
+			$this->users_model->active($user_id);
+
+			$data['type'] = 1;
+			$data['messages'] = 'Active Successed';
 		}
 		
 		$this->load->view('users/inc_header', $data);
@@ -364,21 +365,14 @@ class Users extends CI_Controller {
 		$data['errorMessages'] = '';
 		$data['user_email'] = rawurldecode($email);
 		$data['user_token_key'] = $key;
-
-		$token = ($this->users_model->read_from_email($data['user_email']))["user_token_reset_password"];
-
+		
 		$key = rawurldecode($key);
+		
+		$token = $this->users_model->get_token_from_key($key);
 
 		// try decode the token
 		$tokenDecoded = Token::decode_token($token, $key);
 		$expired = $expired || !$tokenDecoded;
-
-		// if it's going to reset password
-		$isResetPassword = $this->users_model->exists(
-			array('user_email'=> $data['user_email'],
-				'user_token_reset_password IS NOT NULL' => null));
-
-		$expired = $expired || !$isResetPassword;
 
 		if($expired)
 		{
@@ -419,7 +413,6 @@ class Users extends CI_Controller {
 		$this->form_validation->set_rules('user_email', 'user_email', 'callback_validate_emailExists');
 		$this->form_validation->set_message('validate_emailExists', 'Sorry, its a wrong email.');
 
-		
 		$validation_result = func_run_with_ajax($this->form_validation);
 	
 		if ($validation_result["success"] === FALSE)
@@ -442,8 +435,6 @@ class Users extends CI_Controller {
 	public function form_forgot_changePassword()
 	{
 		$user_email = $this->input->post('user_email');
-		//$user_password = $this->input->post('user_password');
-
 		$user_token_key = $this->input->post('user_token_key');
 		$user_new_password = $this->input->post('user_password');
 		$user_confirm = $this->input->post('user_confirm');
@@ -466,27 +457,25 @@ class Users extends CI_Controller {
 		{
 			$json_error = json_encode($validation_result);
 
-			$this->view_forgot3($user_email, $user_token_key,FALSE , $json_error);
+			$this->view_forgot3($user_email, $user_token_key, FALSE , $json_error);
 		}
 		else
 		{
-			// if its not a resetting password and not an already-login user:
-			$isResetPassword = $this->users_model->exists(
-				array('user_email'=> $user_email,
-					'user_token_reset_password IS NOT NULL' => null));
-
 			// check the token
-			$token = ($this->users_model->read_from_email($user_email))["user_token_reset_password"];
+			$token = $this->users_model->get_token_from_key($user_token_key);
+		
 			$tokenDecoded = Token::decode_token($token, $user_token_key);
 			
-			$expired = !$tokenDecoded;
-
-			if($isResetPassword && !$expired)
+			if($tokenDecoded)
 			{
+				//delete token
+
 				$this->users_model->update_password(password_hash($user_new_password, PASSWORD_DEFAULT), array('user_email' => $user_email), false);
 
 				$user_id = sign_auth($user_email, $user_new_password, !empty($remember_me));
-
+				
+				Users_model::delete_token($user_id, TOKEN_TYPE_CHANGE_PASSWORD);
+				
 				$this->view_forgot4();
 			}
 			else
@@ -527,6 +516,9 @@ class Users extends CI_Controller {
 		$this->load->view('users/inc_footer');
 	}
 
+	/**
+	 * active from email, submit to change password
+	 */
 	public function view_changePassword3($email="", $key = "", $expired = FALSE, $json_error = "")
 	{
 
@@ -535,22 +527,23 @@ class Users extends CI_Controller {
 		$data['nav'] = get_nav();
 		$data['errorMessages'] = '';
 
-		$token = ($this->users_model->read(get_user_id()))["user_token_reset_password"];
+		
 		$key = rawurldecode($key);
+		
+		$token = $this->users_model->get_token_from_key($key);
 
 		// try decode the token
 		$tokenDecoded = Token::decode_token($token, $key);
 
-		$expired = $expired || !$tokenDecoded;
-
-		if($expired)
+		if(!$tokenDecoded)
 		{
+			Users_model::delete_token(get_user_id(),TOKEN_TYPE_CHANGE_PASSWORD, $key);			
 			$data['errorMessages'] = "Request Expired";
 		}
 		else
 		{
 			$data['user_email'] = $tokenDecoded["email"];
-			$data['user_token_reset_password'] = $key;
+			$data['user_token_key'] = $key;
 		}
 
 		$this->load->view('users/inc_header', $data);
@@ -575,23 +568,22 @@ class Users extends CI_Controller {
 	{
 		// generate a new password for this user
 		$payload=array(
-			'iss' => "http://randomtransport.com", //who
+			'iss' => TOKEN_TITLE, //who
 			'iat' => $_SERVER['REQUEST_TIME'], //when
 			'exp' => $_SERVER['REQUEST_TIME'] + Token::token_resetPassword_expiry(),
 			'tmnl' => "web",
 			'email'=> $user_email
 		);
 
-		$pass_reset_code = $this->func_randomPassword();
-		//$pass_reset_code = "uebb5k6RWyLS";
+		$tokenKey = $this->func_randomPassword();
 
-		$token = Token::encode_token($payload , $pass_reset_code);
+		$token = Token::encode_token($payload , $tokenKey);
 
 		// update new password to database
-		$this->users_model->update_reset_password($token, array('user_email' => $user_email));
-
+		$this->users_model->create_token_by_email($user_email, $token, TOKEN_TYPE_CHANGE_PASSWORD, $tokenKey);
+		
 		// generate a link
-		$callback_url = site_url($callback_base_url . "/" . rawurlencode($user_email). "/".rawurlencode($pass_reset_code));
+		$callback_url = site_url($callback_base_url . "/" . rawurlencode($user_email). "/".rawurlencode($tokenKey));
 		
 		// The content be modified from User_variables_helper.php
 		$email['email_message'] = variables_emails("reset_password", $user_email, array($callback_url));				
@@ -608,7 +600,7 @@ class Users extends CI_Controller {
 	public function func_logout()
 	{
 		// clear token from database
-		$this->users_model->update_delete_token(get_user_id());
+		Users_model::delete_token(get_user_id(), TOKEN_TYPE_LOGIN);
 		clear_token();
 
 		$this->view_login();
@@ -619,7 +611,7 @@ class Users extends CI_Controller {
 		clear_token();
 		
 		// clear token from database
-		$this->users_model->update_delete_token(get_user_id());
+		Users_model::delete_token(get_user_id(), TOKEN_TYPE_LOGIN);
 		$this->view_login($message);
 	}
 
@@ -749,6 +741,7 @@ class Users extends CI_Controller {
 		$user_id = $this->input->post('user_id');
 
 		$this->users_model->delete($user_id);
+		Users_model::delete_token($user_id);		
 	}
 
 	public function ajax_randomPassword() {

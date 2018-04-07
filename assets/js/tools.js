@@ -55,6 +55,29 @@ function read_dropdown(selector, list)
 	}
 }
 
+function read_select2(selector, data, defaultValue)
+{
+	var select2_data;
+
+	if(data.length>0)
+	{
+		select2_data= data;
+		
+		if(typeof defaultValue !== 'undefined')
+		{
+			select2_data.unshift( {"id":"","value":defaultValue} );
+		}
+	}
+
+	
+	read_dropdown(selector, select2_data);
+	return new $(selector).select2({
+		width : 'resolve',
+		dropdownAutoWidth : true
+	});
+}
+
+
 /**
  * set the date format for Datepicker (only used on Datepicker, to prevent repeat settings for pages)
  * @returns {{format: string, calendarWeeks: boolean, todayHighlight: boolean, autoclose: boolean, todayBtn: string}}
@@ -71,58 +94,6 @@ function dateFormatSetting()
 	}
 }
 
-/**
- * convert all formats of Date in current page-- from MySql to what we need.
- * will be searched by class name: dateFormat
- */
-/*
-function method_convertDateFormats()
-{
-	$(".date_format" ).each(function(index) {
-
-		if($(this).is("input"))
-		{
-			this.value = convertDate(this.value)["full"];
-		}
-		else
-		{
-			this.innerText = convertDate(this.innerText)["full"];
-		}
-	});
-
-	$(".date_format_dateOnly" ).each(function(index) {
-		if($(this).is("input"))
-		{
-			this.value = convertDate(this.value)["dateOnly"];
-		}
-		else
-		{
-			this.innerText = convertDate(this.innerText)["dateOnly"];
-		}
-	});
-}
-
-function convertDate(oldDate)
-{
-	monthNames = ["January", "February", "March", "April", "May", "June",
-		"July", "August", "September", "October", "November", "December"];
-
-	var d = new Date(oldDate);
-	var day = d.getDate();
-	var month = d.getMonth();
-	var year = d.getFullYear();
-
-	var hour = ("0" + d.getHours()).slice(-2);
-	var minutes = ("0" + d.getMinutes()).slice(-2);
-
-	var newDate = {
-		"full" :  monthNames[month] + " " + day + ", " + year + " " + hour + ":" + minutes ,
-		"dateOnly"  :monthNames[month] + " " + day + ", " + year
-	};
-
-	return newDate;
-}
-*/
 
 /**
  * generate anchors for list pages

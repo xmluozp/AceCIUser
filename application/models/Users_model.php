@@ -6,6 +6,9 @@ class Users_model extends CI_Model {
 
 	private static $db;
 	private static $mainTableName;
+	private static $secondaryTableName;
+	
+	
 
 	public function __construct()
 	{
@@ -13,6 +16,7 @@ class Users_model extends CI_Model {
 		
 		self::$db = &get_instance()->db;
 		self::$mainTableName = TABLE_USER;
+		self::$secondaryTableName = TABLE_TOKEN;
 		
 		$this->load->helper('User_email');
 		$this->load->helper('User_utilities');
@@ -141,31 +145,36 @@ class Users_model extends CI_Model {
 	}
 
 	//=============================== basic CRUD above
-	static public function check_token($user_id, $user_token)
+	static public function get_user_from_token_key($user_id, $token_key)
 	{
 		$tableName = self::$mainTableName;
+		$tableName_token = self::$secondaryTableName;
+		
 		$db = self::$db;
 
 		$db->from($tableName);
 		$db->join(TABLE_USER_GROUP, TABLE_USER_GROUP.'.user_group_id = '.self::$mainTableName.'.user_group_id');
+		$db->join($tableName_token, $tableName_token.'.user_id = '.self::$mainTableName.'.user_id');
 
-		$db->where(array('user_id' => $user_id));
-		$db->where(array('user_token' => $user_token));
+		// make sure the user id matches the token
+		$db->where(array( $tableName.'.user_id' => $user_id));
+		$db->where(array( $tableName_token.'.token_key' => $token_key));
 
 		$db->select('user_email');
-		$db->select('user_id');
+		$db->select($tableName.'.user_id');
 		$db->select('organization_id');
 		$db->select(TABLE_USER_GROUP.'.user_group_name AS user_group_name');
-		
 
 		$query = $db->get();
 
 		if($query->num_rows() > 0)
 		{
 			return $query -> row();
-
 		}
-		return false;
+		else
+		{
+			return false;
+		}
 	}
 
 	public function check_email_exists($user_email)
@@ -261,45 +270,76 @@ class Users_model extends CI_Model {
 		self::$db->update(self::$mainTableName);
 	}
 	
-	public function active($user_id, $code)
+	public function update_password($newPassword, $data = array(), $isForgot = false)
 	{
-		// user can only active from a code.
-		if($code && $user_id)
-		{
-			self::$db->set('user_active', TRUE);
-			self::$db->set('user_active_code', NULL);
-			self::$db->where('user_id', $user_id);
-			self::$db->where('user_active_code', $code);
-			
-			self::$db->update(self::$mainTableName);
-			return self::$db->affected_rows() > 0;
-		}
-		else
-		{
-			return FALSE;
-		}	
+		self::$db->set('user_password', "'".$newPassword ."'", FALSE);
+
+		self::$db->where($data);
+
+		self::$db->update(self::$mainTableName);
 	}
-
-	/**
-	 * Only used on login function
-	 * @param $user_id
-	 * @param string $tokenstring
-	 */
-	public function update_token($user_id, $tokenstring = "")
+	
+	public function active($user_id)
 	{
-		self::$db->set('user_last_login', "'".date("Y-m-d H:i:s")."'", FALSE);
-
-		if($tokenstring)
-		{
-			self::$db->set('user_token', '"'.$tokenstring.'"' , FALSE);
-		}
-		else
-		{
-			self::$db->set('user_token', "NULL" , FALSE);
-		}
-
+		// delete the token, active user
+		self::$db->from(self::$mainTableName);
+		self::$db->set('user_active', TRUE);
 		self::$db->where('user_id', $user_id);
 		self::$db->update(self::$mainTableName);
+		
+		self::delete_token($user_id, TOKEN_TYPE_ACTIVE_USER);
+		return self::$db->affected_rows() > 0;
+	}
+	
+	public function create_user_with_tokenKey($data, $tokenKey)
+	{
+		self::$db->insert(self::$mainTableName, $data);
+		$insert_id = self::$db->insert_id();
+
+		if($insert_id)
+		{
+			$payload=array(
+				'iss' => TOKEN_TITLE, //who
+				'iat' => $_SERVER['REQUEST_TIME'], //when
+				'exp' => $_SERVER['REQUEST_TIME'] + Token::token_resetPassword_expiry(),
+				'tmnl' => "web",
+				'email'=> $data["user_email"]
+			);
+			
+			$token = Token::encode_token($payload , $tokenKey);
+			
+			// generate the token
+			$this->create_token($insert_id, $token, TOKEN_TYPE_ACTIVE_USER, $tokenKey);
+		}
+		
+		return $insert_id;
+	}
+	
+	public function create_token_by_email($user_email, $tokenString = "", $token_type, $key)
+	{
+		$user = $this->read_from_email($user_email);
+		
+		if($user)
+		{
+			$this->create_token($user["user_id"], $tokenString, $token_type, $key);
+		}
+	}	
+	
+	public function create_token($user_id, $tokenString = "", $token_type, $tokenKey)
+	{
+		self::delete_token($user_id, $token_type);
+		
+		$data = array(
+			'user_id' => $user_id,
+			'token_type' => $token_type,
+			'token'  => $tokenString,
+			'token_key'  => $tokenKey
+		);
+		
+		self::$db->insert(self::$secondaryTableName, $data);
+		$insert_id = self::$db->insert_id();
+		
+		return $insert_id;
 	}
 
 	/**
@@ -307,36 +347,45 @@ class Users_model extends CI_Model {
 	 * @param $user_id
 	 * @param string $tokenstring
 	 */
-	static public function update_the_token ($user_id, $tokenString = "", $tokenKey = "")
+	static public function update_token($user_id, $tokenString = "", $token_type ,$tokenKey = "")
 	{
-		$tableName = self::$mainTableName;
-		$db = self::$db;
-		$db->set('user_last_login', "'".date("Y-m-d H:i:s")."'", FALSE);
-
-		if($tokenString)
+		self::delete_token($user_id ,TOKEN_TYPE_LOGIN);
+		
+		if($tokenString && $tokenKey)
 		{
-			$db->set('user_token', '"'.$tokenString.'"' , FALSE);
-			$db->set('user_token_key', '"'.$tokenKey.'"' , FALSE);
+			// update last login
+			$tableName = self::$mainTableName;
+			$tableName_token = self::$secondaryTableName;
+			$db = self::$db;
+			
+			$db->set('user_last_login', "'".date("Y-m-d H:i:s")."'", FALSE);
+			$db->where('user_id', $user_id);
+			$db->update($tableName);	
+			
+			// update token
+			$data = array(
+					'user_id' => $user_id,
+					'token_type' => $token_type,
+					'token'  => $tokenString,
+					'token_key'  => $tokenKey
+			);
+			
+			$db->insert($tableName_token, $data);
 		}
-		else
-		{
-			$db->set('user_token', "NULL" , FALSE);
-			$db->set('user_token_key', "NULL" , FALSE);
-		}
-		$db->where('user_id', $user_id);
-		$db->update($tableName);
 	}
 
 	static public function get_tokenKey($tokenString)
 	{
 		$db = self::$db;
-		$db->where("user_token", $tokenString);
-		$db->select("user_token_key");
-		$result = $db->get(self::$mainTableName)->row();
+
+		$db->where("token", $tokenString);
+		$db->select("token_key");
+		
+		$result = $db->get(self::$secondaryTableName)->row();
 
 		if($result)
 		{
-			$returnValue = $result->user_token_key;
+			$returnValue = $result->token_key;
 		}
 		else
 		{
@@ -345,37 +394,65 @@ class Users_model extends CI_Model {
 		return $returnValue;
 	}
 
-	public function update_password($newPassword, $data = array(), $isForgot = false)
-	{
-		self::$db->set('user_password', "'".$newPassword ."'", FALSE);
-
-		// if its called from "forgot password" process, lock the account
-		self::$db->set('user_token_reset_password', 'NULL' , FALSE);
-
-		self::$db->where($data);
-
-		self::$db->update(self::$mainTableName);
-	}
-
-	public function update_reset_password($resetPass, $data = array())
-	{
-		self::$db->set('user_token_reset_password', "'".$resetPass ."'", FALSE);
-
-		self::$db->where($data);
-
-		self::$db->update(self::$mainTableName);
+	static public function delete_token($user_id =-1, $token_type=-1 , $token_key= -1)
+	{	
+		$data = array();
+		
+		if($user_id != -1)
+		{
+			$data["user_id"] = $user_id;
+		}
+		if($token_type != -1)
+		{
+			$data["token_type"] = $token_type;
+		}
+		if($token_key != -1)
+		{
+			$data["token_key"] = $token_key;
+		}
+	
+		return self::$db->delete(self::$secondaryTableName, $data);
 	}
 	
-	public function update_delete_token($id)
-	{
-		self::$db->set('user_token', 'NULL' , FALSE);
-		self::$db->set('user_token_key', 'NULL' , FALSE);
-	
-		self::$db->where("user_id", $id);
+	public function get_token_from_key($token_key)
+	{	
+		$db = self::$db;
 
-		self::$db->update(self::$mainTableName);
+		$db->where("token_key", $token_key);
+		$db->select("token");
+		
+		$result = $db->get(self::$secondaryTableName)->row();
+
+		if($result)
+		{
+			$returnValue = $result->token;
+		}
+		else
+		{
+			$returnValue = "";
+		}
+		return $returnValue;
+	}
+	
+	public function get_user_id_from_token_key($token_key)
+	{	
+		$db = self::$db;
+		
+		$db->where("token_key", $token_key);
+		$db->select("user_id");
+		
+		$result = $db->get(self::$secondaryTableName)->row();
+
+		if($result)
+		{
+			$returnValue = $result->user_id;
+		}
+		else
+		{
+			$returnValue = "";
+		}
+		return $returnValue;
 	}	
-	
 }
 
 

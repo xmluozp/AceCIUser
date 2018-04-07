@@ -199,7 +199,7 @@
 				$ci->session->set_userdata($userData);
 			}
 			// update database login information, including token
-			Users_model::update_the_token($user->user_id, $tokenString, $tokenKey);
+			Users_model::update_token($user->user_id, $tokenString,TOKEN_TYPE_LOGIN, $tokenKey);
 
 			$returnValue = $user->user_id;
 		}
@@ -213,46 +213,57 @@
 	 */
 	function continue_token($token)
 	{
+		$returnValue = array();
 		
 		$ci =& get_instance();
 		$ci->load->model("users_model");
 		
 		// match the token with key.
-		/* Right now the token is saved in the Users table as a column. Actually it can be a new table*/
 		$getTokenKey = Users_model::get_tokenKey($token); 
+		
+		// success means correct token
 		$tokenArray = Token::decode_token($token, $getTokenKey);
 
-		// get user from token payload
-		$user_id = $tokenArray["uid"];
-		$user = Users_model::check_token($user_id, $token);
-
-		// check expiry
-		$isExpiry = $tokenArray["exp"] < $_SERVER['REQUEST_TIME'];
-
 		// login the user
-		if($user && !$isExpiry)
+		if(!$tokenArray)
 		{
-			// generate a new token to continue the login status
-			$tokenKey = generate_tokenKey() ; //generate_tokenKey();
-			$tokenString = generate_token($tokenArray["uid"], $tokenKey);
-
-			if (is_browser()){
-				$userData = array(
-					'user_id' => $user_id,
-					'user_email' => $user->user_email,
-					'user_group_name' => $user->user_group_name,
-					'organization_id' => $user->organization_id,
-				);
-
-				$ci->session->set_userdata($userData);
-			}
-			Users_model::update_the_token($user->user_id, $tokenString, $tokenKey);
-			return array("user_id" => $user_id, "organization_id" => $user->organization_id);
+			Users_model::delete_token(-1, TOKEN_TYPE_LOGIN, $getTokenKey);
+			$returnValue =  array("user_id" => 0, "organization_id" => 0);
 		}
 		else
 		{
-			return array("user_id" => 0, "organization_id" => 0);
+			// get user from token payload
+			$user_id = $tokenArray["uid"];
+			
+			$user = Users_model::get_user_from_token_key($user_id, $getTokenKey);
+
+			if($user)
+			{
+				// generate a new token to continue the login status
+				$tokenKey = generate_tokenKey() ; //generate_tokenKey();
+				$tokenString = generate_token($tokenArray["uid"], $tokenKey);
+
+				if (is_browser()){
+					$userData = array(
+						'user_id' => $user_id,
+						'user_email' => $user->user_email,
+						'user_group_name' => $user->user_group_name,
+						'organization_id' => $user->organization_id,
+					);
+
+					$ci->session->set_userdata($userData);
+				}
+				Users_model::update_token($user->user_id, $tokenString, TOKEN_TYPE_LOGIN ,$tokenKey);
+				
+				$returnValue = array("user_id" => $user_id, "organization_id" => $user->organization_id);
+			}
+			else
+			{
+				$returnValue = array("user_id" => 0, "organization_id" => 0);
+			}
 		}
+		
+		return $returnValue;
 	}
 	
 	function clear_token()
@@ -296,7 +307,7 @@
 	 * generate a random key for token
 	 * @return string
 	 */
-	function generate_tokenKey()
+	/*function generate_tokenKey()
 	{
 		$alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
 		$pass = array();
@@ -306,8 +317,37 @@
 			$pass[] = $alphabet[$n];
 		}
 		return implode($pass);
+	}*/
+	
+	function crypto_rand_secure($min, $max)
+	{
+		$range = $max - $min;
+		if ($range < 1) return $min; // not so random...
+		$log = ceil(log($range, 2));
+		$bytes = (int) ($log / 8) + 1; // length in bytes
+		$bits = (int) $log + 1; // length in bits
+		$filter = (int) (1 << $bits) - 1; // set all lower bits to 1
+		do {
+			$rnd = hexdec(bin2hex(openssl_random_pseudo_bytes($bytes)));
+			$rnd = $rnd & $filter; // discard irrelevant bits
+		} while ($rnd > $range);
+		return $min + $rnd;
 	}
 
+	function generate_tokenKey($length = 20)
+	{
+		$token = "";
+		$codeAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		$codeAlphabet.= "abcdefghijklmnopqrstuvwxyz";
+		$codeAlphabet.= "0123456789";
+		$max = strlen($codeAlphabet); // edited
+
+		for ($i=0; $i < $length; $i++) {
+			$token .= $codeAlphabet[crypto_rand_secure(0, $max-1)];
+		}
+
+		return $token;
+	}
 //================================================================ Navigation bars
 
 	/**

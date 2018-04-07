@@ -24,8 +24,9 @@ if($_POST)
 	$user_table = trim(filter_input(INPUT_POST, 'user_table'));
 	$role_table = trim(filter_input(INPUT_POST, 'role_table'));
 	$org_table = trim(filter_input(INPUT_POST, 'org_table'));
+	$token_table = trim(filter_input(INPUT_POST, 'token_table'));
 	
-	
+
 	define('DB_DSN','mysql:host=' . $hostname. ';dbname='. $databasename);
 	define('DB_USER',$username);
 	define('DB_PASS',$password);  
@@ -37,7 +38,8 @@ if($_POST)
 		die();
 	}
 	
-	$query = "DROP TABLE ".$user_table .";";
+	$query = "DROP TABLE ".$token_table. ";";
+	$query .= "DROP TABLE ".$user_table .";";
 	$query .= "DROP TABLE ".$role_table. ";";
 	$query .= "DROP TABLE ".$org_table. ";";
 	
@@ -61,13 +63,9 @@ if($_POST)
 		user_password	VARCHAR(255),
 		user_created 	DATETIME DEFAULT CURRENT_TIMESTAMP,
 		user_active		BOOLEAN  DEFAULT 1,
-		user_active_code VARCHAR(12),
 		user_group_id	INT(11) DEFAULT 1,
 		organization_id	INT(11) DEFAULT 0,
 		user_last_login DATETIME DEFAULT CURRENT_TIMESTAMP,
-		user_token		VARCHAR(350), 
-		user_token_key	VARCHAR(350), 
-		user_token_reset_password	VARCHAR(350),
 		is_deleted		BOOLEAN DEFAULT 0
 	);";
 	
@@ -82,6 +80,20 @@ if($_POST)
 		organization_name		VARCHAR(64),
 		organization_logo		VARCHAR(64)
 	);";
+	
+	$query .= "CREATE TABLE ". $token_table ." (
+		token_id 		INT(11) AUTO_INCREMENT PRIMARY KEY,
+		user_id			INT(11),
+		token			VARCHAR(350),
+		token_key		VARCHAR(64) ,
+		token_type		INT(2),
+		UNIQUE(token_key)
+	);";
+	
+	$query .= "ALTER TABLE ".$token_table ."
+				ADD FOREIGN KEY (user_id) REFERENCES ". $user_table ."(user_id)
+				ON DELETE CASCADE;";
+	
 	
 	$statement = $db->prepare($query);
 	$statement->execute();		
@@ -129,6 +141,7 @@ if($_POST)
 			<p><label>Name of the User Table:</label> <input type="text" readonly name="user_table" value="<?=TABLE_USER?>"/></p>
 			<p><label>Name of the Role Table:</label> <input type="text" readonly name="role_table" value="<?=TABLE_USER_GROUP?>"/></p>
 			<p><label>Name of the Organization Table:</label> <input type="text" readonly name="org_table" value="<?=TABLE_ORG?>"/></p>
+			<p><label>Name of the Token Table:</label> <input type="text" readonly name="token_table" value="<?=TABLE_TOKEN?>"/></p>
 			
 			
 			<button>Generate</button>
