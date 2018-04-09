@@ -103,7 +103,8 @@ defined('LIMIT_UPLOAD_SIZE')    OR define('LIMIT_UPLOAD_SIZE', 1024); //KB
 // You can insert any role here or change the level, but pleas keep VISITOR and ADMINISTRATOR role to satisfy user functions
 defined('VISITOR')     			OR define('VISITOR', 0);
 defined('NORMAL_USER')      	OR define('NORMAL_USER', 1);
-defined('ADMINISTRATOR')      	OR define('ADMINISTRATOR', 2);
+defined('VIP_USER')      	OR define('VIP_USER', 2);
+defined('ADMINISTRATOR')      	OR define('ADMINISTRATOR', 3);
 
 defined('LOGIN_REDIRECTION')    OR define('LOGIN_REDIRECTION', 'users/view_login_success');
 // The permission error message page which have to be permission-free, avoid any permission check.

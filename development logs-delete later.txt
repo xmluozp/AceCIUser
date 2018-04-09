@@ -27,3 +27,4 @@ restructure user model?
 用self model? 也会被搞乱？
 
 
+需要把email的信内容拿出来

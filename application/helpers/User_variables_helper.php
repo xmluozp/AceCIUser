@@ -60,8 +60,14 @@ function variables_get_navigation_permissions()
 		)	
 	);
 	
-	// ADMIN
+	// VIP USER
 	$returnValue[2] = array(
+		"Extended"	  => array("1"),
+		"NavigationList" => array()	
+	);
+	
+	// ADMIN
+	$returnValue[3] = array(
 		"Extended"	  => array("1"),
 		"NavigationList" => array()	
 	);

@@ -65,7 +65,6 @@ class User_groups_model extends CI_Model {
 		self::$db->where('user_group_name !=', 'Guest');
 		self::$db->select('user_group_id AS id');
 		self::$db->select('user_group_name AS value');
-		self::$db->select('(NOT user_group_is_system) AS readonly');
 
 		$result = self::$db->get(self::$mainTableName)->result();
 		return $result;
