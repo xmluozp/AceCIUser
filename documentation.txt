@@ -10,7 +10,7 @@ Views
 	- solve them later
 	
 ----------------------------
-How do I user the Ace CI User with my project?
+How do I user the Ace CI User with my current project?
 
 require those new files:
 
@@ -104,8 +104,6 @@ Then generate database and go
 		For example, edit your config/routes.php
 		$route['default_controller'] = 'users/view_login';
 
-
-
 		
 ----------------------------	
 For additional
@@ -167,5 +165,13 @@ For additional
 				
 			Becareful, In order to prevent anonymous requests, functions here are better been set (in the permission list). 
 
-	If you need more user groups (roles):
+	If you need more user groups (roles), you need to change 3 places:
+		Database
+			insert a record to user_groups
+			change your admin account's user groups(if you changed the group id of admin user)
+		Config/constants.php
+						
+		Helpers/User_variables_helper.php
+			Give the new role a customized navigation bar
 		
+		---- but do not delete the Visitor group, it will be used for the "level = 0" situation.
