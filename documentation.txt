@@ -8,6 +8,11 @@ Views
 	ace_user/inc_asset.php
 	ace_user/inc_full_asset.php
 	- solve them later
+
+Email:
+	if email not exists, dont tell user. just ignore and return success
+	need a clear token function (filtered by organization)
+	
 	
 ----------------------------
 How do I user the Ace CI User with my current project?
@@ -80,16 +85,16 @@ Then we need configurations to make it work:
 			'password' => '123',
 			'database' => 'aceciuser'
 
-	Helpers/User_variables_helper.php
-		Here to set your project functions work with role system
-		The first function, variables_get_auth(), has to be set. Its a list of permissions. Anyone without permission will be kicked out.
-		There are 4 arguments.
-			1: The role level, not id
-			2: The Controller name needs to be checked
-			3: The Function name to be checked, * is wildcard means all functions in this controller. The wildcard checking has lower priority.
-			4: Operator, could be =, >, <, >=, <=
-		For example, $returnValue[] = array(VISITOR, "Users","*", ">=");
-			Means any one want to run any function in Users, has to be a VISITOR or higher(VISITOR here is 0 level, means everyone)
+    Helpers/User_variables_helper.php
+        Here to set your project functions to work with role system
+        The first function, variables_get_auth(), has to be set. Its a list of permissions. Anyone without permission will be kicked out.
+        There are 4 arguments.
+            1: The role level, not id
+            2: The Controller name needs to be checked
+            3: The Function name to be checked, * is wildcard means all functions in this controller. The wildcard checking has lower priority.
+            4: Operator, could be =, >, <, >=, <=
+        For example, $returnValue[] = array(VISITOR, "Users","*", ">=");
+            Means anyone want to run any function in Users, has to be a VISITOR or higher(VISITOR here is 0 level, means everyone)
 	
 ----------------------------
 Then generate database and go
@@ -108,36 +113,36 @@ Then generate database and go
 ----------------------------	
 For additional
 
-	About Captcha
-		The constant LOGIN_ATTEMPTING_LIMIT is the login try times before the Captcha occured. Right now is 2 just for testing purpose.
-		Please at least set it to 5.
-		There are some other picture generate settings in Captcha.php
+    About Captcha
+        The constant LOGIN_ATTEMPTING_LIMIT is the login try times before the Captcha occurred. Right now is 2 just for testing purpose.
+        Please at least set it to 5.
+        There are some other picture generate settings in Captcha.php
 
-	You can customize your navigation bar for different user groups. (if you dont have your own navigation bar)
-		It's in
-			Helpers/User_variables_helper.php
-				variables_get_navigation()
-					Set the full navigation bar
-				variables_get_navigation_permissions()
-					Set the different user group's navigation bar
-				
-	You can set what should be put in email notification
-		It's in
-			Helpers/User_variables_helper.php
-				variables_emails()
-				
-	If you want additional columns for an user, and you want to keep the User Management page rather than use your own, then you need to modify MVC:
-		M:
-			Models/Users_model.php
-				read_datatable()
-					Change what columns should be read for the user list
-					the extraSearch part will process the Advanced Search request from User List page
+    You can customize your navigation bar for different user groups. (if you don't have your own navigation bar)
+        It's in
+            Helpers/User_variables_helper.php
+                variables_get_navigation()
+                    Set the full navigation bar
+                variables_get_navigation_permissions()
+                    Set the different user group's navigation bar
+                
+    You can set what should be put in the email notification
+        It's in
+            Helpers/User_variables_helper.php
+                variables_emails()
+                
+    If you want additional columns for a user, and you want to keep the User Management page rather than use your own, then you need to modify MVC:
+        M:
+            Models/Users_model.php
+                read_datatable()
+                    Change what columns should be read for the user list
+                    the extra search part will process the Advanced Search request from User List page
 					
 		V:
 			View/users/page_index.php
 				Find the <table> tag with id="list_users", add what column you want, have to match the column name from the Model. If its not matching, that <td> fileds will be blank.
 				
-				Those attributes start with "data-" are annotation of column, if you want to use the Datatables in your project, feel free to do so.
+				Those attributes start with "data-" are the annotation of columns, if you want to use the Datatables in your project, feel free to do so.
 					*  data-source: --- name of the column you are looking for
 					*  data-orderby-desc
 					*  data-orderby-asc: --- if has this attribute, will be as default sorting
