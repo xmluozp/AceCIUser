@@ -66,7 +66,6 @@ class Organizations_model extends CI_Model {
 		// extra search code here
 		$extraSearch = $datatable_requests["extraSearch"];
 
-
 		self::$db->select('organization_id');
 		self::$db->select('organization_logo');
 		self::$db->select('organization_name');

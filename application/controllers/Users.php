@@ -218,6 +218,7 @@ class Users extends CI_Controller {
 		$user_password	 = $this->input->post('user_password');
 		$user_confirm	 = $this->input->post('user_confirm');
 		$user_group_id = NORMAL_USER;
+		$result = 0;
 		
 		$validata = array(
 			'user_email' 		=> $user_email,
@@ -245,6 +246,39 @@ class Users extends CI_Controller {
 		
 		$validation_result = func_run_with_ajax($this->form_validation);
 	
+		
+		if ($validation_result["success"] === TRUE)
+		{		
+			if($is_email_inform)
+			{
+				$tokenKey_of_newuser = generate_tokenKey();
+				$data['user_password'] = password_hash($data['user_password'], PASSWORD_DEFAULT);
+				
+				$callback_url = site_url("users/func_active/".$tokenKey_of_newuser);
+				
+				// The content be modified from User_variables_helper.php
+				$email['email_message'] = variables_emails("sign_up", $user_email, array($callback_url));			
+				$email['email_subject'] = 'Do-Not-Reply: Your account has been created';
+				$email['email_to'] = $user_email;
+
+				try{
+					send_email($email);
+					$result = $this->users_model->create_user_with_tokenKey($data, $tokenKey_of_newuser);
+				}
+				catch(Exception $e)
+				{
+					$validation_result["success"] = FALSE;
+					$validation_result["messages"]["user_email"] = $e->getMessage();
+				}	
+			}
+			else
+			{
+				$result = $this->users_model->create($data);		
+			}
+		}
+		
+		$validation_result["success"] = $validation_result["success"] && $result;
+	
 		if ($validation_result["success"] === FALSE)
 		{
 			$json_error = json_encode($validation_result);
@@ -253,37 +287,16 @@ class Users extends CI_Controller {
 		}
 		else
 		{
+			$data['type'] = 1;
+			$data['title'] = "Account Created";
+			$data['messages'] = 'Your account has been created. Please active your account.';	
+			$data['nav'] = get_nav();
 			
-			$tokenKey_of_newuser = generate_tokenKey();
-			$data['user_password'] = password_hash($data['user_password'], PASSWORD_DEFAULT);
-
-			// send the form to proccessing code
-			$result = $this->users_model->create_user_with_tokenKey($data, $tokenKey_of_newuser);
-			
-			if($result && $is_email_inform)
-			{
-			
-				$callback_url = site_url("users/func_active/".$tokenKey_of_newuser);
-				
-				// The content be modified from User_variables_helper.php
-				$email['email_message'] = variables_emails("sign_up", $user_email, array($callback_url));			
-				$email['email_subject'] = 'Do-Not-Reply: Your account has been created';
-				$email['email_to'] = $user_email;
-				
-				// call function in User_email_helper
-				send_email($email);
-				
-				$data['type'] = 1;
-				$data['title'] = "Account Created";
-				$data['messages'] = 'Your account has been created. Please active your account.';	
-				$data['nav'] = get_nav();
-				
-				$this->load->view('users/inc_header', $data);
-				$this->load->view('users/inc_navigation');
-				$this->load->view('users/inc_full_asset', $data);
-				$this->load->view('users/page_message', $data);
-				$this->load->view('users/inc_footer');
-			}
+			$this->load->view('users/inc_header', $data);
+			$this->load->view('users/inc_navigation');
+			$this->load->view('users/inc_full_asset', $data);
+			$this->load->view('users/page_message', $data);
+			$this->load->view('users/inc_footer');
 		}
 	}	 
 	
@@ -414,6 +427,20 @@ class Users extends CI_Controller {
 		$this->form_validation->set_message('validate_emailExists', 'Sorry, its a wrong email.');
 
 		$validation_result = func_run_with_ajax($this->form_validation);
+		
+		if ($validation_result["success"] === TRUE)
+		{
+			$callback = 'users/view_forgot3';
+			
+			try{
+				$this->func_sendResetPasswordEmail($user_email, $callback);
+			}
+			catch(Exception $e)
+			{
+				$validation_result["success"] = FALSE;
+				$validation_result["messages"]["user_email"] = $e->getMessage();
+			}
+		}
 	
 		if ($validation_result["success"] === FALSE)
 		{
@@ -422,9 +449,6 @@ class Users extends CI_Controller {
 		}
 		else
 		{
-			$callback = 'users/view_forgot3';
-			$this->func_sendResetPasswordEmail($user_email, $callback);
-
 			$this->view_forgot2(array("user_email" => $user_email));
 		}
 	}
@@ -579,8 +603,6 @@ class Users extends CI_Controller {
 
 		$token = Token::encode_token($payload , $tokenKey);
 
-		// update new password to database
-		$this->users_model->create_token_by_email($user_email, $token, TOKEN_TYPE_CHANGE_PASSWORD, $tokenKey);
 		
 		// generate a link
 		$callback_url = site_url($callback_base_url . "/" . rawurlencode($user_email). "/".rawurlencode($tokenKey));
@@ -592,6 +614,9 @@ class Users extends CI_Controller {
 
 		// call function in Email_helper
 		send_email($email);
+		
+		// update new password to database
+		$this->users_model->create_token_by_email($user_email, $token, TOKEN_TYPE_CHANGE_PASSWORD, $tokenKey);		
 	}
 	
 	/**
