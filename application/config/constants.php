@@ -93,32 +93,33 @@ defined('TABLE_ORG')   		  OR define('TABLE_ORG', 'organizations');
 defined('TABLE_TOKEN')   		  OR define('TABLE_TOKEN', 'user_tokens');
 
 defined('SUPER_ORGANIZATION')   OR define('SUPER_ORGANIZATION', 1);
-defined('LOGIN_ATTEMPTING_LIMIT')   OR define('LOGIN_ATTEMPTING_LIMIT', 2);
 
 defined('UPLOAD_FOLDER')     	OR define('UPLOAD_FOLDER', 'uploads');
+defined('DEFAULT_LOGO')     	OR define('DEFAULT_LOGO', "logo.png");
 defined('LIMIT_UPLOAD_SIZE')    OR define('LIMIT_UPLOAD_SIZE', 1024); //KB
 
 // roles.
-// Caution: here is the level of role, not id.
+// Caution: here is the level of role, not id. However, just for convinience, it's better keep the id number as same as the level .
 // You can insert any role here or change the level, but pleas keep VISITOR and ADMINISTRATOR role to satisfy user functions
+// VISITOR level should be always 0
 defined('VISITOR')     			OR define('VISITOR', 0);
 defined('NORMAL_USER')      	OR define('NORMAL_USER', 1);
 defined('VIP_USER')      	OR define('VIP_USER', 2);
 defined('ADMINISTRATOR')      	OR define('ADMINISTRATOR', 3);
 
+// jump to the page after login
 defined('LOGIN_REDIRECTION')    OR define('LOGIN_REDIRECTION', 'users/view_login_success');
-// The permission error message page which have to be permission-free, avoid any permission check.
+defined('LOGIN_ATTEMPTING_LIMIT')   OR define('LOGIN_ATTEMPTING_LIMIT', 2);
+
+// This page is the only permission-free page, to display error message when the user is denied.
 // format here please be: ControllerName/FunctionName; Case insensitive
 defined('NO_PERMISSION_ERROR_PAGE')    OR define('NO_PERMISSION_ERROR_PAGE', 'users/func_kick_out');
-defined('DEFAULT_LOGO')     	OR define('DEFAULT_LOGO', "logo.png");
+
 
 // token types, dont change
 defined('TOKEN_TITLE')     	OR define('TOKEN_TITLE', 'Ace Space');
 defined('TOKEN_TYPE_LOGIN')     	OR define('TOKEN_TYPE_LOGIN', 0);
 defined('TOKEN_TYPE_CHANGE_PASSWORD')     	OR define('TOKEN_TYPE_CHANGE_PASSWORD', 1);
 defined('TOKEN_TYPE_ACTIVE_USER')     	OR define('TOKEN_TYPE_ACTIVE_USER', 2);
-
-
-
 
 //-------------------------------------------------------------------------

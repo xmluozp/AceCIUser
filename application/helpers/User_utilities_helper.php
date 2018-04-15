@@ -75,6 +75,7 @@
 
 		$result = $result = get_organization();
 		$returnValue= $result ? $result->organization_logo : $returnValue;
+		$returnValue= $returnValue ? $returnValue : DEFAULT_LOGO;	
 		
 		return UPLOAD_FOLDER . "/". $returnValue;
 	}	

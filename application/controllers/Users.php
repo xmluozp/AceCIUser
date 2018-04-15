@@ -583,8 +583,15 @@ class Users extends CI_Controller {
 		if ($user_email)
 		{
 			$callback = 'users/view_changePassword3';
-			$this->func_sendResetPasswordEmail($user_email, $callback);
-			$this->view_changePassword2(array("user_email" => $user_email));
+			
+			try{
+				$this->func_sendResetPasswordEmail($user_email, $callback);
+				$this->view_changePassword2(array("user_email" => $user_email));
+			}
+			catch(Exception $e)
+			{
+				$this->view_changePassword($e->getMessage());
+			}
 		}
 	}
 

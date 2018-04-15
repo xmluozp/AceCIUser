@@ -18,7 +18,12 @@
 					Reset the password from the link provided.
 				</p>
 			</div>
-
+			
+			<?php if($errorMessages):?>
+				<div class="alert alert-danger" role="alert">
+					<?=rawurldecode($errorMessages)?>
+				</div>
+			<?php endif?>
 
 			<div class="form-group" style="text-align: center;">
 				<button type="submit" class="btn btn-primary btn-lg" style="width: 100%; ">Submit</button>

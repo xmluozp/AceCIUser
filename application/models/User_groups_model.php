@@ -72,8 +72,11 @@ class User_groups_model extends CI_Model {
 	public function read_list_as_level_dropdown($user_group_level)
 	{
 		self::$db->from(self::$mainTableName);
-		self::$db->where(self::$mainTableName.'.user_group_level <', $user_group_level);
-
+		
+		if($user_group_level < ADMINISTRATOR)
+		{
+			self::$db->where(self::$mainTableName.'.user_group_level <', $user_group_level);
+		}
 		// dont retrive the VISITOR group
 		self::$db->where(self::$mainTableName.'.user_group_level !=', '0');
 		self::$db->select(self::$mainTableName.'.user_group_id AS id');

@@ -10,9 +10,9 @@ Views
 	- solve them later
 
 Email:
-	if email not exists, dont tell user. just ignore and return success
+	** if email not exists, dont tell user. just ignore and return success
 	need a clear token function (filtered by organization)
-	
+	admin group can promote admin
 	
 ----------------------------
 How do I user the Ace CI User with my current project?
