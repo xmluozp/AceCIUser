@@ -200,7 +200,7 @@
 				$ci->session->set_userdata($userData);
 			}
 			// update database login information, including token
-			Users_model::update_token($user->user_id, $tokenString,TOKEN_TYPE_LOGIN, $tokenKey);
+			Users_model::update_token($user->user_id, $tokenString,TOKEN_TYPE_LOGIN, $tokenKey, Token::token_expiry());
 
 			$returnValue = $user->user_id;
 		}
@@ -254,7 +254,7 @@
 
 					$ci->session->set_userdata($userData);
 				}
-				Users_model::update_token($user->user_id, $tokenString, TOKEN_TYPE_LOGIN ,$tokenKey);
+				Users_model::update_token($user->user_id, $tokenString, TOKEN_TYPE_LOGIN ,$tokenKey, Token::token_expiry());
 				
 				$returnValue = array("user_id" => $user_id, "organization_id" => $user->organization_id);
 			}
@@ -595,12 +595,14 @@
 
 		public static function token_expiry()
 		{
-			return 86400 * 30; // 30 days
+			// default 30 days, was set in constants.php file
+			return EXPIRY_TOKEN; 
 		}
 
 		public static function token_resetPassword_expiry()
 		{
-			return 60 * 10; // 10 minutes
+			// 10 minutes, was set in constants.php file
+			return EXPIRY_USER_ACTIVE; 
 		}
 
 		// encode a token

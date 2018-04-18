@@ -87,6 +87,8 @@ if($_POST)
 		token			VARCHAR(350),
 		token_key		VARCHAR(64) ,
 		token_type		INT(2),
+		token_created	DATETIME DEFAULT CURRENT_TIMESTAMP,	
+		token_expiry	DATETIME DEFAULT CURRENT_TIMESTAMP,	
 		UNIQUE(token_key)
 	);";
 	

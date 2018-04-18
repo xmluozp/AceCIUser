@@ -29,6 +29,8 @@ function variables_get_auth()
 	
 	// Permissions of Organization functions
 	$returnValue[] = array(ADMINISTRATOR, "Organizations","*", ">=");
+	$returnValue[] = array(ADMINISTRATOR, "Users","view_junks", ">=");
+	$returnValue[] = array(ADMINISTRATOR, "Users","form_junks", ">=");
 	
 	return $returnValue;
 }
@@ -55,7 +57,7 @@ function variables_get_navigation_permissions()
 		"Extended"	  => array(),
 		"NavigationList" => array(
 			"home",
-			"usr","usr01",
+			"usr", "usr01", "usr02",
 			"org"
 		)	
 	);
@@ -93,7 +95,13 @@ function variables_get_navigation(){
 	$subitems[] = array(
 		"FunctionCode"	=>	"usr01"	,
 		"Name"			=>	"User Accounts",
-		"Target"		=>	"users");
+		"Target"		=>	"users");  
+		
+	$subitems[] = array(
+		"FunctionCode"	=>	"usr02"	,
+		"Name"			=>	"Junk Records",
+		"Target"		=>	"users/view_junks",
+		"Divider"		=> 	true); // Divider is the line between this item and the item above
 
 	$returnValue[] = array(
 		"FunctionCode"	=>	"usr",

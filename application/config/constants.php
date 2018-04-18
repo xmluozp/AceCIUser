@@ -110,6 +110,8 @@ defined('ADMINISTRATOR')      	OR define('ADMINISTRATOR', 3);
 // jump to the page after login
 defined('LOGIN_REDIRECTION')    OR define('LOGIN_REDIRECTION', 'users/view_login_success');
 defined('LOGIN_ATTEMPTING_LIMIT')   OR define('LOGIN_ATTEMPTING_LIMIT', 2);
+defined('EXPIRY_TOKEN')   OR define('EXPIRY_TOKEN', 86400 * 30); // 30 days
+defined('EXPIRY_USER_ACTIVE')   OR define('EXPIRY_USER_ACTIVE', 60 * 10); // 10 minutes
 
 // This page is the only permission-free page, to display error message when the user is denied.
 // format here please be: ControllerName/FunctionName; Case insensitive

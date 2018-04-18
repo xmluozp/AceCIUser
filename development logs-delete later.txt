@@ -30,5 +30,5 @@ restructure user model?
 需要把email的信内容拿出来
 
 要改的bug:
-email如果不存在会报错
+** email如果不存在会报错
 要有地方可以清空废弃的token

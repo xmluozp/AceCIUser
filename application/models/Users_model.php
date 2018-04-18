@@ -309,26 +309,26 @@ class Users_model extends CI_Model {
 			$token = Token::encode_token($payload , $tokenKey);
 			
 			// generate the token
-			$this->create_token($insert_id, $token, TOKEN_TYPE_ACTIVE_USER, $tokenKey);
+			$this->create_token($insert_id, $token, TOKEN_TYPE_ACTIVE_USER, $tokenKey, Token::token_resetPassword_expiry());
 		}
 		
 		return $insert_id;
 	}
 	
-	public function create_token_by_email($user_email, $tokenString = "", $token_type, $key)
+	public function create_token_by_email($user_email, $tokenString = "", $token_type, $key, $expiry )
 	{
 		$user = $this->read_from_email($user_email);
 		
 		if($user)
 		{
-			$this->create_token($user["user_id"], $tokenString, $token_type, $key);
+			$this->create_token($user["user_id"], $tokenString, $token_type, $key,  $expiry);
 		}
 	}	
 	
-	public function create_token($user_id, $tokenString = "", $token_type, $tokenKey)
+	public function create_token($user_id, $tokenString = "", $token_type, $tokenKey, $expiry = 0 )
 	{
 		self::delete_token($user_id, $token_type);
-		
+				
 		$data = array(
 			'user_id' => $user_id,
 			'token_type' => $token_type,
@@ -337,7 +337,12 @@ class Users_model extends CI_Model {
 		);
 		
 		self::$db->insert(self::$secondaryTableName, $data);
+		
 		$insert_id = self::$db->insert_id();
+		
+		self::$db->set('token_expiry', 'DATE_ADD(token_created, INTERVAL '. $expiry . ' SECOND)', FALSE);
+		self::$db->where("token_id", $insert_id);
+		self::$db->update(self::$secondaryTableName);
 		
 		return $insert_id;
 	}
@@ -347,21 +352,22 @@ class Users_model extends CI_Model {
 	 * @param $user_id
 	 * @param string $tokenstring
 	 */
-	static public function update_token($user_id, $tokenString = "", $token_type ,$tokenKey = "")
+	static public function update_token($user_id, $tokenString = "", $token_type , $tokenKey = "",  $expiry = 0)
 	{
 		self::delete_token($user_id ,TOKEN_TYPE_LOGIN);
 		
+		
+		// update last login
+		$tableName = self::$mainTableName;
+		$tableName_token = self::$secondaryTableName;
+		$db = self::$db;
+		
+		$db->set('user_last_login', 'CURTIME()', FALSE);
+		$db->where('user_id', $user_id);
+		$db->update($tableName);	
+	
 		if($tokenString && $tokenKey)
 		{
-			// update last login
-			$tableName = self::$mainTableName;
-			$tableName_token = self::$secondaryTableName;
-			$db = self::$db;
-			
-			$db->set('user_last_login', "'".date("Y-m-d H:i:s")."'", FALSE);
-			$db->where('user_id', $user_id);
-			$db->update($tableName);	
-			
 			// update token
 			$data = array(
 					'user_id' => $user_id,
@@ -369,8 +375,14 @@ class Users_model extends CI_Model {
 					'token'  => $tokenString,
 					'token_key'  => $tokenKey
 			);
-			
+
 			$db->insert($tableName_token, $data);
+			
+			$insert_id = $db->insert_id();
+			
+			self::$db->set('token_expiry', 'DATE_ADD(token_created, INTERVAL '. $expiry . ' SECOND)', FALSE);
+			self::$db->where("token_id", $insert_id);
+			self::$db->update(self::$secondaryTableName);
 		}
 	}
 
@@ -453,6 +465,68 @@ class Users_model extends CI_Model {
 		}
 		return $returnValue;
 	}	
+	
+	public function get_user_expired($range)
+	{		
+		$returnValue = 0;
+
+		self::$db->from(self::$mainTableName);
+		self::$db->join(self::$secondaryTableName, self::$secondaryTableName.'.user_id = '.self::$mainTableName.'.user_id', 'left');				
+		self::$db->where('token_expiry < CURTIME()','', FALSE);		
+		self::$db->where('token_type', TOKEN_TYPE_ACTIVE_USER);
+		
+
+		$returnValue = self::$db->count_all_results();
+
+		//print_r(self::$db->last_query());
+		//die();				
+		return $returnValue;		
+	}
+	
+	public function get_token_expired($range)
+	{
+		$returnValue = 0;
+
+		self::$db->from(self::$secondaryTableName);				
+		self::$db->where('token_expiry < CURTIME()','', FALSE);		
+		//self::$db->where('token_type !=', TOKEN_TYPE_ACTIVE_USER);		
+		
+		$returnValue = self::$db->count_all_results();
+		
+		//print_r(self::$db->last_query());
+		//die();
+		
+		return $returnValue;		
+	}	
+	
+	public function delete_user_expired($range)
+	{
+
+		#Create where clause
+		$this->db->select('user_id');
+		self::$db->from(self::$secondaryTableName);
+		self::$db->where('token_expiry < CURTIME()','', FALSE);		
+		self::$db->where('token_type', TOKEN_TYPE_ACTIVE_USER);
+		$where_clause = $this->db->get_compiled_select();
+		
+		
+		#Create main query
+		self::$db->where(self::$mainTableName.".user_id IN (". $where_clause .") AND ".self::$mainTableName.".user_active = 0  ", NULL, FALSE);
+		self::$db->delete(self::$mainTableName);
+		
+		return self::$db->affected_rows();
+	}		
+	
+	public function delete_token_expired($range)
+	{
+		
+		//return self::$db->delete(self::$mainTableName, array('organization_id' => $id));	
+	
+		self::$db->where('token_expiry < CURTIME()','', FALSE);		
+		self::$db->delete(self::$secondaryTableName);
+		
+		return self::$db->affected_rows();
+	}		
 }
 
 

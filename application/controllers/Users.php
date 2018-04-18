@@ -55,6 +55,45 @@ class Users extends CI_Controller {
 		$this->load->view('users/form_modal_user.php', $data);
 		$this->load->view('users/inc_footer');
 	}
+	
+	public function view_junks()
+	{
+		$data['title'] = 'Junk data cleaner';
+		$data['nav'] = get_nav();
+		$data['messages'] = "";	
+
+		//EXPIRY_USER_ACTIVE EXPIRY_TOKEN
+		$data['count_users'] = $this->users_model->get_user_expired( 50 );
+		$data['count_tokens'] = $this->users_model->get_token_expired( 60 );
+				
+		$this->load->view('users/inc_header', $data);
+		$this->load->view('users/inc_navigation');
+		$this->load->view('users/inc_full_asset', $data);
+		$this->load->view('users/page_junks', $data);
+		$this->load->view('users/inc_footer');
+	}
+	
+	public function form_junks()
+	{
+		$data['title'] = 'Junk data cleaner';
+		$data['nav'] = get_nav();
+		
+		// be careful, must clean junk user first, else can not get user from token		
+		$count_user_cleaned = $this->users_model->delete_user_expired( 50 );
+		$count_token_cleaned = $this->users_model->delete_token_expired( 60 );
+
+		$data['messages'] = "You deleted " .$count_user_cleaned ." junk user(s) and ".$count_token_cleaned." junk token(s)";
+		
+		$data['count_users'] = $this->users_model->get_user_expired( 50 );
+		$data['count_tokens'] = $this->users_model->get_token_expired( 60 );		
+		
+		$this->load->view('users/inc_header', $data);
+		$this->load->view('users/inc_navigation');
+		$this->load->view('users/inc_full_asset', $data);
+		$this->load->view('users/page_junks', $data);
+		$this->load->view('users/inc_footer');
+	}
+	
 
 	/**
 	 * read users to generate a data grid
@@ -229,7 +268,7 @@ class Users extends CI_Controller {
 		$data = array(
 			'user_email' 		=> $user_email,
 			'user_password'		=> $user_password,
-			'user_created' 		=> date("Y-m-d H:i:s"),
+			//'user_created' 		=> date("Y-m-d H:i:s"),  // sometimes its different from mysql time
 			'user_active' 		=> !$is_email_inform,
 			'organization_id' 	=> $organization_id,
 			'user_group_id' 	=> $user_group_id,
@@ -623,7 +662,7 @@ class Users extends CI_Controller {
 		send_email($email);
 		
 		// update new password to database
-		$this->users_model->create_token_by_email($user_email, $token, TOKEN_TYPE_CHANGE_PASSWORD, $tokenKey);		
+		$this->users_model->create_token_by_email($user_email, $token, TOKEN_TYPE_CHANGE_PASSWORD, $tokenKey, Token::token_resetPassword_expiry());		
 	}
 	
 	/**
@@ -662,7 +701,7 @@ class Users extends CI_Controller {
 		$data = array(
 			'user_email' 		=> $user_email,
 			'user_password'		=> $user_password,
-			'user_created' 		=> date("Y-m-d H:i:s"),
+			//'user_created' 		=> date("Y-m-d H:i:s"),
 			'user_active' 		=> filter_var($this->input->post('user_active'), FILTER_VALIDATE_BOOLEAN),
 			'organization_id' 	=> $organization_id,
 			'user_group_id' 	=> $this->input->post('user_group_id'),
