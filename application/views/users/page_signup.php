@@ -16,7 +16,9 @@
 				<div class="card-body">
 					<h5 class="card-title">Sign Up:</h5>
 					<p class="card-text">
-						1. Enter your email and password.<br/> 2. Active your account from your email.
+						1. Enter your email and password.	
+						<span style="font-size:11px; color:grey;font-style: italic;"> - Password is between 8 and 32 characters</span><br/> 		
+						3. Active your account from your email.
 					</p>
 				</div>
 

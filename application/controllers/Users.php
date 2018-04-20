@@ -94,7 +94,54 @@ class Users extends CI_Controller {
 		$this->load->view('users/inc_footer');
 	}
 	
+	public function view_manage_account($messages = "", $json_error = "", $status = -1)
+	{
+		$data['title'] = 'My Account';
+		$data['messages'] = $messages;
+		$data['status'] = $status;
+		$data['json_error'] = $json_error;
+		$data['nav'] = get_nav();
 
+		$this->load->view('users/inc_header', $data);
+		$this->load->view('users/inc_navigation');
+		$this->load->view('users/page_manage_account', $data);
+		$this->load->view('users/inc_footer');
+	}
+	
+	/**
+	 * Its a template of update user information. However, we have nothing to be updated at this point.
+	 */
+	public function form_manage_account($errorMessages = "", $json_error = "")
+	{
+		$user_id = get_user_id();
+		$user_first_name		 = $this->input->post('user_first_name');
+		
+		// step 1: set what data you want to update
+		$data = array(
+			'user_first_name' 		=> $user_first_name,
+		);
+			
+		// step 2: set validation rules
+		$this->form_validation->set_data($data);
+		$this->form_validation->set_rules('user_first_name', 'First name', 'trim|required');
+		
+		$validation_result = func_run_with_ajax($this->form_validation);
+	
+		if ($validation_result["success"] === TRUE)
+		{	
+			// we dont have the column right now, so just comment it out
+			//$this->users_model->update($user_id, $data);	
+			$this->view_manage_account("You successed to submit but there is nothing to change", $json_error,1);
+		}
+		else
+		{
+			$json_error = json_encode($validation_result);
+			$this->view_manage_account("Oops, please check your inputs", $json_error,0);	
+		}
+	}
+	
+	
+	
 	/**
 	 * read users to generate a data grid
 	 */
@@ -147,7 +194,7 @@ class Users extends CI_Controller {
 		$v_data['user_password'] = $user_password;
 	
 		$this->form_validation->set_rules('user_email', 'email', 'trim|required|valid_email');
-		$this->form_validation->set_rules('user_password', 'password', 'required|trim');
+		$this->form_validation->set_rules('user_password', 'password', 'trim|required|min_length[8]|max_length[32]');
 				
 		if($isShowCaptcha)
 		{
@@ -279,8 +326,8 @@ class Users extends CI_Controller {
 		$this->form_validation->set_data($validata);
 		$this->form_validation->set_rules('user_email', 'email', 'trim|required|valid_email|is_unique['.TABLE_USER.'.user_email]');
 
-		$this->form_validation->set_rules('user_password', 'password', 'required|trim|callback_validate_match_password');
-		$this->form_validation->set_rules('user_confirm', 'password', 'required|trim|callback_validate_match_password');
+		$this->form_validation->set_rules('user_password', 'password', 'required|min_length[8]|max_length[32]|trim|callback_validate_match_password');
+		$this->form_validation->set_rules('user_confirm', 'password', 'required|min_length[8]|max_length[32]|trim|callback_validate_match_password');
 		$this->form_validation->set_message('validate_match_password', 'Your password has to be matched.');
 		
 		$validation_result = func_run_with_ajax($this->form_validation);
@@ -460,7 +507,7 @@ class Users extends CI_Controller {
 
 		$this->form_validation->set_data($v_data);
 		$this->form_validation->set_rules('user_email', 'email', 'trim|required|valid_email');
-
+	
 		// call a function: validate_emailExists to validate the email
 		$this->form_validation->set_rules('user_email', 'user_email', 'callback_validate_emailExists');
 		$this->form_validation->set_message('validate_emailExists', 'Sorry, its a wrong email.');
@@ -508,9 +555,9 @@ class Users extends CI_Controller {
 		$v_data['user_confirm'] = $user_confirm;
 
 		$this->form_validation->set_data($v_data);
-
-		$this->form_validation->set_rules('user_password', 'password', 'required|trim|callback_validate_match_password');
-		$this->form_validation->set_rules('user_confirm', 'password', 'required|trim|callback_validate_match_password');
+		
+		$this->form_validation->set_rules('user_password', 'password', 'required|trim|min_length[8]|max_length[32]|callback_validate_match_password');
+		$this->form_validation->set_rules('user_confirm', 'password', 'required|trim|min_length[8]|max_length[32]|callback_validate_match_password');
 		
 		$this->form_validation->set_message('validate_match_password', 'Your password has to be matched.');
 
@@ -617,7 +664,9 @@ class Users extends CI_Controller {
 
 	public function form_changePassword_sendEmail()
 	{
-		$user_email = ($this->users_model->read(get_user_id()))["user_email"];
+		$get_user = $this->users_model->read(get_user_id());
+		
+		$user_email = $get_user["user_email"];
 
 		if ($user_email)
 		{
@@ -711,7 +760,7 @@ class Users extends CI_Controller {
 		// validation
 		$this->form_validation->set_data($data);
 		$this->form_validation->set_rules('user_email', 'email', 'trim|required|valid_email|is_unique['.TABLE_USER.'.user_email]');
-		$this->form_validation->set_rules('user_password', 'password', 'required|trim');
+		$this->form_validation->set_rules('user_password', 'password', 'trim|required|min_length[8]|max_length[32]');
 
 		$validation_result = func_run_with_ajax($this->form_validation);
 	
@@ -769,6 +818,7 @@ class Users extends CI_Controller {
 		// validation
 		$this->form_validation->set_data($data);
 		$this->form_validation->set_rules('user_email', 'email', 'required');
+		$this->form_validation->set_rules('user_password', 'password', 'trim|required|min_length[8]|max_length[32]');
 
 		//================== above is codeigniter things==================
 		$validation_result = func_run_with_ajax($this->form_validation);
@@ -794,6 +844,20 @@ class Users extends CI_Controller {
 
 		echo json_encode($returnAJAX);
 	}
+	
+	/**
+	 * AJAX read one user's data, return as JSON
+	 */
+	public function ajax_userDetails_me()
+	{
+		$user_id = get_user_id();
+
+		// todo: need to change, only permitted data be retrived
+		$returnAJAX = $this->users_model->read_form($user_id);
+
+		echo json_encode($returnAJAX);
+	}
+	
 
 	/**
 	 *  AJAX activate or lock the user, the active users will be check from hooks/ManageAuth.php: checkAuth

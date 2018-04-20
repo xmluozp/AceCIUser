@@ -54,7 +54,7 @@
 <?=$_SESSION['user_email']?> [<?=$_SESSION['user_group_name']?>]
 			  </a>
 			  <div class="dropdown-menu dropdown-menu-right">
-				  <a class="dropdown-item" href="<?=site_url("Users/view_account")?>" style="color: #212529;">Account</a>
+				  <a class="dropdown-item" href="<?=site_url("Users/view_manage_account")?>" style="color: #212529;">Account</a>
 				  <a class="dropdown-item" href="<?=site_url("Users/view_changePassword")?>" style="color: #212529;">Change Password</a>
 				  <div class="dropdown-divider"></div>
 				  <a class="dropdown-item" href="<?php echo site_url('users/func_logout');?>" style="color: #212529;">Sign Out</a>

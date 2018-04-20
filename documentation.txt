@@ -11,9 +11,12 @@ Views
 
 Email:
 	** if email not exists, dont tell user. just ignore and return success
-	need a clear token function (filtered by organization)
+	** need a clear token function (filtered by organization)
 	** admin group can promote admin
-	password format requirements - 8 characters
+	** password format requirements - 8 characters
+	** ()[] syntax errors
+	
+Sanitize
 	
 ----------------------------
 How do I user the Ace CI User with my current project?
@@ -181,3 +184,7 @@ For additional
 			Give the new role a customized navigation bar
 		
 		---- but do not delete the Visitor group, it will be used for the "level = 0" situation.
+		
+	Default admin is: 
+		admin@rrc.none
+		rrc12345

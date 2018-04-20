@@ -17,7 +17,8 @@
 			}
 			elseif(isset($_COOKIE["token"]) && $_COOKIE["token"])
 			{
-				$returnValue = (continue_token($_COOKIE["token"]))["user_id"];
+				$get_token = continue_token($_COOKIE["token"]);
+				$returnValue = $get_token["user_id"];
 			}
 		}
 		else
@@ -52,7 +53,8 @@
 			}
 			elseif(isset($_COOKIE["token"]) && $_COOKIE["token"])
 			{
-				$returnValue = (continue_token($_COOKIE["token"]))["organization_id"];
+				$get_token = continue_token($_COOKIE["token"]);
+				$returnValue = $get_token["organization_id"];
 			}
 		}
 
