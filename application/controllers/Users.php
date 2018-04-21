@@ -197,7 +197,8 @@ class Users extends CI_Controller {
 		{
 			$v_data['captcha'] = $this->input->post('captcha');
 			$this->form_validation->set_rules('captcha', 'captcha', 'required|callback_validate_captcha');
-			$this->form_validation->set_message('validate_captcha', "Wrong Captcha  ". $_SESSION["captcha"]);
+			$this->form_validation->set_message('validate_captcha', "Wrong Captcha");
+			//. $_SESSION["captcha"]);
 		}
 		
 		$this->form_validation->set_data($v_data);
@@ -379,7 +380,7 @@ class Users extends CI_Controller {
 		}
 	}	 
 	
-	public function func_active($key)
+	public function func_active($key="")
 	{
 		$data['title'] = 'User Active';
 		$data['type'] = 1;
@@ -436,7 +437,7 @@ class Users extends CI_Controller {
 		$this->load->view('users/inc_footer');
 	}
 
-	public function view_forgot2($args)
+	public function view_forgot2($args=array('user_email'=>''))
 	{
 		$data['title'] = 'Forgot Password - Email Has Been Sent';
 		$data['nav'] = get_nav();
@@ -606,7 +607,7 @@ class Users extends CI_Controller {
 		$this->load->view('users/inc_footer');
 	}
 
-	public function view_changePassword2($args)
+	public function view_changePassword2($args=array('user_email'=>''))
 	{
 		$data['title'] = 'Change Password - Email Has Been Sent';
 		$data['nav'] = get_nav();
@@ -675,7 +676,7 @@ class Users extends CI_Controller {
 		}
 	}
 
-	private function func_sendResetPasswordEmail($user_email, $callback_base_url)
+	private function func_sendResetPasswordEmail($user_email = "", $callback_base_url="")
 	{
 		// generate a new password for this user
 		$payload=array(
@@ -718,7 +719,7 @@ class Users extends CI_Controller {
 		$this->view_login();
 	}
 	
-	public function func_kick_out($message)
+	public function func_kick_out($message="")
 	{
 		clear_token();
 		
@@ -908,7 +909,7 @@ class Users extends CI_Controller {
 	/*
 	 * validate if the email exists in accounts(not contact emails)
 	 */
-	public function validate_emailExists($str)
+	public function validate_emailExists($str="")
 	{
 		return $this->users_model->check_email_exists($str);
 	}
@@ -918,7 +919,7 @@ class Users extends CI_Controller {
 		return $this->input->post('user_password') == $this->input->post('user_confirm');
 	}
 	
-	public function validate_captcha($str){
+	public function validate_captcha($str=""){
 		return $this->session->userdata("captcha") == $str;
 	}
 	

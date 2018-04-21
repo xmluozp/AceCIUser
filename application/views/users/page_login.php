@@ -39,8 +39,8 @@
 						Please enter the Captcha code, or - <a href="<?php echo site_url('users/view_forgot');?>">Forgot You Password</a>?
 					</div>
 
-				<img class="form-control" src="<?=base_url("assets/captcha.php")?>" id="captcha" onclick="
-					document.getElementById('captcha').src='<?=base_url("assets/captcha.php")?>?'+Math.random();"
+				<img class="form-control" src="<?=base_url("ace_assets/captcha.php")?>" id="captcha" onclick="
+					document.getElementById('captcha').src='<?=base_url("ace_assets/captcha.php")?>?'+Math.random();"
 				style="cursor: pointer;"/>
 				<input type="text" class="form-control" data-validation autocomplete="off" name="captcha"
 					   id="captcha" placeholder="Enter the text here" style="background: rgba(255, 255, 200, 0.8);">
