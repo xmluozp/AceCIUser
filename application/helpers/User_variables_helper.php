@@ -24,6 +24,8 @@ function variables_get_auth()
 	$returnValue[] = array(VISITOR, "Users","form_signup", ">=");
 	$returnValue[] = array(VISITOR, "Users","func_active", ">=");
 
+	$returnValue[] = array(VISITOR, "Users","func_logout", ">=");
+
 	// Permissions of User functions
 	$returnValue[] = array(VISITOR, "Users","*", ">");
 	

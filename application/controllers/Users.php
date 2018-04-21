@@ -63,12 +63,11 @@ class Users extends CI_Controller {
 		$data['messages'] = "";	
 
 		//EXPIRY_USER_ACTIVE EXPIRY_TOKEN
-		$data['count_users'] = $this->users_model->get_user_expired( 50 );
-		$data['count_tokens'] = $this->users_model->get_token_expired( 60 );
+		$data['count_users'] = $this->users_model->get_user_expired( EXPIRY_USER_ACTIVE );
+		$data['count_tokens'] = $this->users_model->get_token_expired( EXPIRY_TOKEN );
 				
 		$this->load->view('users/inc_header', $data);
 		$this->load->view('users/inc_navigation');
-		$this->load->view('users/inc_full_asset', $data);
 		$this->load->view('users/page_junks', $data);
 		$this->load->view('users/inc_footer');
 	}
@@ -79,17 +78,16 @@ class Users extends CI_Controller {
 		$data['nav'] = get_nav();
 		
 		// be careful, must clean junk user first, else can not get user from token		
-		$count_user_cleaned = $this->users_model->delete_user_expired( 50 );
-		$count_token_cleaned = $this->users_model->delete_token_expired( 60 );
+		$count_user_cleaned = $this->users_model->delete_user_expired( EXPIRY_USER_ACTIVE );
+		$count_token_cleaned = $this->users_model->delete_token_expired( EXPIRY_TOKEN );
 
 		$data['messages'] = "You deleted " .$count_user_cleaned ." junk user(s) and ".$count_token_cleaned." junk token(s)";
 		
-		$data['count_users'] = $this->users_model->get_user_expired( 50 );
-		$data['count_tokens'] = $this->users_model->get_token_expired( 60 );		
+		$data['count_users'] = $this->users_model->get_user_expired( EXPIRY_USER_ACTIVE );
+		$data['count_tokens'] = $this->users_model->get_token_expired( EXPIRY_TOKEN );		
 		
 		$this->load->view('users/inc_header', $data);
 		$this->load->view('users/inc_navigation');
-		$this->load->view('users/inc_full_asset', $data);
 		$this->load->view('users/page_junks', $data);
 		$this->load->view('users/inc_footer');
 	}
@@ -171,7 +169,6 @@ class Users extends CI_Controller {
 		$data['json_error'] = $json_error;
 
 		$this->load->view('users/inc_header', $data);
-		$this->load->view('users/inc_full_asset', $data);
 		$this->load->view('users/page_login', $data);
 		$this->load->view('users/inc_footer');
 	}
@@ -246,12 +243,10 @@ class Users extends CI_Controller {
 		{
 			
 			$this->load->view('users/inc_navigation');
-			$this->load->view('users/inc_full_asset', $data);
 			$this->load->view('users/page_home', $data);			
 		}
 		else
 		{	
-			$this->load->view('users/inc_full_asset', $data);
 			$this->load->view('users/page_home_inactive', $data);	
 		}
 
@@ -265,7 +260,6 @@ class Users extends CI_Controller {
 		$data['nav'] = get_nav();
 		$this->load->view('users/inc_header', $data);
 		$this->load->view('users/inc_navigation');
-		$this->load->view('users/inc_full_asset', $data);
 		$this->load->view('users/page_home', $data);
 		$this->load->view('users/inc_footer');
 	}
@@ -380,7 +374,6 @@ class Users extends CI_Controller {
 			
 			$this->load->view('users/inc_header', $data);
 			$this->load->view('users/inc_navigation');
-			$this->load->view('users/inc_full_asset', $data);
 			$this->load->view('users/page_message', $data);
 			$this->load->view('users/inc_footer');
 		}
@@ -420,7 +413,6 @@ class Users extends CI_Controller {
 		
 		$this->load->view('users/inc_header', $data);
 		$this->load->view('users/inc_navigation');
-		$this->load->view('users/inc_full_asset', $data);
 		$this->load->view('users/page_message', $data);
 		$this->load->view('users/inc_footer');
 	}
