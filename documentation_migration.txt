@@ -17,6 +17,7 @@ Email:
 	** ()[] syntax errors
 	
 Sanitize
+Local Email
 	
 ----------------------------
 How do I user the Ace CI User with my current project?
