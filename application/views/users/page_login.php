@@ -14,41 +14,41 @@
             <div class="modal-body">
 
 
-                    <?php if($errorMessages):?>
+                <?php if($errorMessages):?>
 
                     <div class="alert alert-danger" role="alert">
                         <?=rawurldecode($errorMessages)?>
                     </div>
-                    <?php endif?>
+                <?php endif?>
 
-                    <div class="form-group">
-                        <label for="user_email">Email</label>
-                        <input type="email" class="form-control" data-validation autocomplete="off" id="user_email" name="user_email" aria-describedby="emailHelp"
-                               placeholder="Enter email" style="background: rgba(255, 255, 255, 0.3);">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="user_password">Password</label>
-                        <input type="password" class="form-control" data-validation autocomplete="off" name="user_password"
-                               id="user_password" placeholder="Password" style="background: rgba(255, 255, 255, 0.3);">
-                    </div>
-                    <div class="form-group form-check" style="padding-left: 20px;">
-                        <input type="checkbox" class="form-check-input" id="remember_me" name="remember_me" value="1">
-                        <label class="form-check-label" for="remember_me" style="cursor: pointer;">Remember Me</label>
-                    </div>
-                <?php if($this->session->userdata('login_attempting')>=LOGIN_ATTEMPTING_LIMIT):?>
                 <div class="form-group">
-
-                        <div class="alert alert-warning" role="alert">
-                            Please enter the Captcha code, or - <a href="<?php echo site_url('users/view_forgot');?>">Forgot You Password</a>?
-                        </div>
-
-                    <img class="form-control" src="<?=base_url("ace_assets/captcha.php")?>" id="captcha" onclick="
-                        document.getElementById('captcha').src='<?=base_url("ace_assets/captcha.php")?>?'+Math.random();"
-                    style="cursor: pointer;"/>
-                    <input type="text" class="form-control" data-validation autocomplete="off" name="captcha"
-                           id="captcha" placeholder="Enter the text here" style="background: rgba(255, 255, 200, 0.8);">
+                    <label for="user_email">Email</label>
+                    <input type="email" class="form-control" data-validation autocomplete="off" id="user_email" name="user_email" aria-describedby="emailHelp"
+                           placeholder="Enter email" style="background: rgba(255, 255, 255, 0.3);">
                 </div>
+
+                <div class="form-group">
+                    <label for="user_password">Password</label>
+                    <input type="password" class="form-control" data-validation autocomplete="off" name="user_password" id="user_password" placeholder="Password" style="background: rgba(255, 255, 255, 0.3);">
+                </div>
+                <div class="form-group form-check" style="padding-left: 20px;">
+                    <input type="checkbox" class="form-check-input" id="remember_me" name="remember_me" value="1">
+                    <label class="form-check-label" for="remember_me" style="cursor: pointer;">Remember Me</label>
+                </div>
+
+                <?php if($this->session->userdata('login_attempting')>=LOGIN_ATTEMPTING_LIMIT):?>
+                    <div class="form-group">
+
+                            <div class="alert alert-warning" role="alert">
+                                Please enter the Captcha code, or - <a href="<?php echo site_url('users/view_forgot');?>">Forgot You Password</a>?
+                            </div>
+
+                        <img class="form-control" src="<?=base_url("ace_assets/captcha.php")?>" id="captcha" onclick="
+                            document.getElementById('captcha').src='<?=base_url("ace_assets/captcha.php")?>?'+Math.random();"
+                        style="cursor: pointer;"/>
+                        <input type="text" class="form-control" data-validation autocomplete="off" name="captcha"
+                               id="captcha" placeholder="Enter the text here" style="background: rgba(255, 255, 200, 0.8);">
+                    </div>
                 <?php endif?>
             </div>
 

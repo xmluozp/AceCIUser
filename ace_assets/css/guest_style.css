@@ -8,8 +8,8 @@ body{
 
 .login_panel_vertical_central{
 	position: absolute;
-	top: 50%;
+	top: 20%;
 	left: 50%;
-	transform: translate(-50%, -50%);
-	margin-top: -100px;
+	transform: translate(-50%, -20%);
+	/*margin-top: -80px;*/
 }

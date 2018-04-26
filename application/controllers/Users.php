@@ -229,7 +229,9 @@ class Users extends CI_Controller {
 			else
 			{
 				if($_SESSION['login_attempting'] < LOGIN_ATTEMPTING_LIMIT){$_SESSION['login_attempting'] += 1;}
-				$this->view_login(rawurlencode("Wrong username or password. Attemptings: " . $_SESSION['login_attempting']));
+				$attemptingCountMessage = $_SESSION['login_attempting'] . "/" . LOGIN_ATTEMPTING_LIMIT;
+
+				$this->view_login(rawurlencode("Wrong username or password. Attemptings: " . $attemptingCountMessage));
 			}
 		}
 	}
