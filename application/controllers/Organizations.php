@@ -73,7 +73,9 @@ class Organizations extends CI_Controller {
 			'organization_name'		  => $organization_name,
 		);
 
-		$this->form_validation->set_data($data);
+        $data = $this->security->xss_clean($data);
+
+        $this->form_validation->set_data($data);
 		$this->form_validation->set_rules('organization_name', 'name', 'required');
 		$this->form_validation->set_rules('organization_id', 'id', 'required|is_unique['.TABLE_ORG.'.organization_id]');
 
@@ -103,6 +105,8 @@ class Organizations extends CI_Controller {
 			'organization_name'		  => $organization_name
 		);
 
+        $data = $this->security->xss_clean($data);
+
 		// validation
 		$this->form_validation->set_data($data);
 		$this->form_validation->set_rules('organization_name', 'name', 'required');
@@ -126,7 +130,8 @@ class Organizations extends CI_Controller {
 			$this->load->library('upload', $config);
 			$isUploadSuccess = $this->upload->do_upload('organization_logo');
 			$upload_data = $this->upload->data();
-			
+            $upload_data = $this->security->xss_clean($upload_data);
+
 			$error = array('error' => $this->upload->display_errors());
 						
 			if($isUploadSuccess && $upload_data)
@@ -166,6 +171,8 @@ class Organizations extends CI_Controller {
 	{
 		$id = $this->input->post("id");
 
+        $id = $this->security->xss_clean($id);
+
 		$returnAJAX = $this->organizations_model->read_form($id);
 
 		echo json_encode($returnAJAX);
@@ -179,6 +186,8 @@ class Organizations extends CI_Controller {
 	public function ajax_delete()
 	{
 		$organization_id = $this->input->post('organization_id');
+
+        $organization_id = $this->security->xss_clean($organization_id);
 
 		// delete old logo
 		$currentOrg = $this->organizations_model->read($organization_id);
@@ -195,6 +204,8 @@ class Organizations extends CI_Controller {
 	public function ajax_temp_join()
 	{
 		$organization_id = $this->input->post('organization_id');
+
+        $organization_id = $this->security->xss_clean($organization_id);
 
 		$_SESSION['organization_id'] = $organization_id;
 

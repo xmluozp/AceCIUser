@@ -13,11 +13,14 @@
 					<p class="card-text">
 						You can manage your account here. 
 						<br/>
-						<b style="color:red">Right now we don't have any information could be managed, so this page is just a template for your future development.
+						<b style="color:red">
+                            Right now we don't have any information could be managed, so this page is just a template for your future development.
+                            There is no responsive codes on the server side.
+
 						</b>
 						<br/><br/>
-						You may want to delete the entrance before you have something to be modified<br/>
-						The code of the entrance is in: views/users/inc_navigation.php
+						You may want to delete the entrance when your users table have no additional information to be modified<br/>
+						The code of the entrance is in the file: views/users/inc_navigation.php
 						
 					</p>
 				</div>
@@ -39,9 +42,9 @@
 				<div class="form-group">
 					<label for="user_email">Email</label>
 					<input type="text" class="form-control" data-validation autocomplete="off" id="user_first_name" name="user_email" 
-						   placeholder="Enter your first name" style="background: rgba(255, 255, 255, 0.3);">
+						   placeholder="" style="background: rgba(255, 255, 255, 0.3);">
 				</div>
-				
+
 				
 				<div class="form-group">
 					<label for="user_first_name">First Name</label>

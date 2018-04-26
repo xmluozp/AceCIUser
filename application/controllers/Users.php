@@ -118,7 +118,9 @@ class Users extends CI_Controller {
 		$data = array(
 			'user_first_name' 		=> $user_first_name,
 		);
-			
+
+        $data = $this->security->xss_clean($data);
+
 		// step 2: set validation rules
 		$this->form_validation->set_data($data);
 		$this->form_validation->set_rules('user_first_name', 'First name', 'trim|required');
@@ -189,6 +191,8 @@ class Users extends CI_Controller {
 		// validation
 		$v_data['user_email'] = $user_email;
 		$v_data['user_password'] = $user_password;
+
+        $v_data = $this->security->xss_clean($v_data);
 	
 		$this->form_validation->set_rules('user_email', 'email', 'trim|required|valid_email');
 		$this->form_validation->set_rules('user_password', 'password', 'trim|required|min_length[8]|max_length[32]');
@@ -316,7 +320,10 @@ class Users extends CI_Controller {
 			'user_group_id' 	=> $user_group_id,
 			'is_deleted' 		=> false
 		);
-		
+
+        $data = $this->security->xss_clean($data);
+        $validata = $this->security->xss_clean($validata);
+
 		// validation
 		$this->form_validation->set_data($validata);
 		$this->form_validation->set_rules('user_email', 'email', 'trim|required|valid_email|is_unique['.TABLE_USER.'.user_email]');
@@ -498,6 +505,8 @@ class Users extends CI_Controller {
 		// validation
 		$v_data['user_email'] = $user_email;
 
+        $v_data = $this->security->xss_clean($v_data);
+
 		$this->form_validation->set_data($v_data);
 		$this->form_validation->set_rules('user_email', 'email', 'trim|required|valid_email');
 	
@@ -546,6 +555,8 @@ class Users extends CI_Controller {
 		// validation
 		$v_data['user_password'] = $user_new_password;
 		$v_data['user_confirm'] = $user_confirm;
+
+        $v_data = $this->security->xss_clean($v_data);
 
 		$this->form_validation->set_data($v_data);
 		
@@ -750,6 +761,8 @@ class Users extends CI_Controller {
 			'is_deleted' 		=> false
 		);
 
+        $data = $this->security->xss_clean($data);
+
 		// validation
 		$this->form_validation->set_data($data);
 		$this->form_validation->set_rules('user_email', 'email', 'trim|required|valid_email|is_unique['.TABLE_USER.'.user_email]');
@@ -797,6 +810,8 @@ class Users extends CI_Controller {
 			'user_active' 		=>  filter_var($this->input->post('user_active'), FILTER_VALIDATE_BOOLEAN)
 		);
 
+        $data = $this->security->xss_clean($data);
+
 		if(strlen($this->input->post('user_group_id'))>0)
 		{
 			$data['user_group_id'] = $this->input->post('user_group_id');
@@ -832,6 +847,8 @@ class Users extends CI_Controller {
 	{
 		$user_id = $this->input->post("id");
 
+        $user_id = $this->security->xss_clean($user_id);
+
 		// todo: need to change, only permitted data be retrived
 		$returnAJAX = $this->users_model->read_form($user_id);
 
@@ -860,6 +877,8 @@ class Users extends CI_Controller {
 	{
 		$user_id = $this->input->post('user_id');
 
+        $user_id = $this->security->xss_clean($user_id);
+
 		// todo: need to change, only permitted data be changed
 		$this->users_model->switch_active($user_id);
 	}
@@ -867,6 +886,8 @@ class Users extends CI_Controller {
 	public function ajax_userDelete()
 	{
 		$user_id = $this->input->post('user_id');
+
+        $user_id = $this->security->xss_clean($user_id);
 
 		$this->users_model->delete($user_id);
 		Users_model::delete_token($user_id);		
@@ -881,6 +902,9 @@ class Users extends CI_Controller {
 		$ajaxText = "";
 
 		$user_email = $this->input->post('user_email');
+
+        $user_email = $this->security->xss_clean($user_email);
+
 		$is_valid_email = filter_var($user_email, FILTER_VALIDATE_EMAIL);
 		$email_exists = $this->users_model->check_email_exists($user_email);
 
