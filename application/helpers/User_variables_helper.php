@@ -8,7 +8,7 @@
 function variables_get_auth()
 {
 	$returnValue = array();
-	
+
 	// Functions can be accessed by VISITORs:
 	$returnValue[] = array(VISITOR, "Users","view_forgot", "=");
 	$returnValue[] = array(VISITOR, "Users","view_forgot2", "=");

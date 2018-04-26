@@ -196,7 +196,8 @@ class Users extends CI_Controller {
 	
 		$this->form_validation->set_rules('user_email', 'email', 'trim|required|valid_email');
 		$this->form_validation->set_rules('user_password', 'password', 'trim|required|min_length[8]|max_length[32]');
-				
+        $this->form_validation->set_message('min_length', '%s: the minimum of characters is %s');
+
 		if($isShowCaptcha)
 		{
 			$v_data['captcha'] = $this->input->post('captcha');
@@ -331,7 +332,8 @@ class Users extends CI_Controller {
 		$this->form_validation->set_rules('user_password', 'password', 'required|min_length[8]|max_length[32]|trim|callback_validate_match_password');
 		$this->form_validation->set_rules('user_confirm', 'password', 'required|min_length[8]|max_length[32]|trim|callback_validate_match_password');
 		$this->form_validation->set_message('validate_match_password', 'Your password has to be matched.');
-		
+        $this->form_validation->set_message('min_length', '%s: the minimum of characters is %s');
+
 		$validation_result = func_run_with_ajax($this->form_validation);
 	
 		
@@ -562,7 +564,8 @@ class Users extends CI_Controller {
 		
 		$this->form_validation->set_rules('user_password', 'password', 'required|trim|min_length[8]|max_length[32]|callback_validate_match_password');
 		$this->form_validation->set_rules('user_confirm', 'password', 'required|trim|min_length[8]|max_length[32]|callback_validate_match_password');
-		
+        $this->form_validation->set_message('min_length', '%s: the minimum of characters is %s');
+
 		$this->form_validation->set_message('validate_match_password', 'Your password has to be matched.');
 
 		$validation_result = func_run_with_ajax($this->form_validation);
@@ -767,6 +770,7 @@ class Users extends CI_Controller {
 		$this->form_validation->set_data($data);
 		$this->form_validation->set_rules('user_email', 'email', 'trim|required|valid_email|is_unique['.TABLE_USER.'.user_email]');
 		$this->form_validation->set_rules('user_password', 'password', 'trim|required|min_length[8]|max_length[32]');
+        $this->form_validation->set_message('min_length', '%s: the minimum of characters is %s');
 
 		$validation_result = func_run_with_ajax($this->form_validation);
 	
@@ -820,19 +824,25 @@ class Users extends CI_Controller {
 		if(strlen($this->input->post('user_password')) > 0)
 		{
 			$data['user_password'] = $this->input->post('user_password');
-			$data['user_password'] = password_hash($data['user_password'], PASSWORD_DEFAULT);
 		}
 
 		// validation
 		$this->form_validation->set_data($data);
 		$this->form_validation->set_rules('user_email', 'email', 'required');
-		$this->form_validation->set_rules('user_password', 'password', 'trim|required|min_length[8]|max_length[32]');
+		$this->form_validation->set_rules('user_password', 'password', 'min_length[8]|max_length[32]|trim');
 
 		//================== above is codeigniter things==================
 		$validation_result = func_run_with_ajax($this->form_validation);
 	
 		if ($validation_result["success"] !== FALSE)
 		{
+
+            if(strlen($this->input->post('user_password')) > 0)
+            {
+                $data['user_password'] = password_hash($data['user_password'], PASSWORD_DEFAULT);
+            }
+
+
 			// send the form to proccessing code
 			$this->users_model->update($user_id, $data);
 		}

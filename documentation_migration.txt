@@ -1,24 +1,6 @@
 
 ----------------------------
-todo:
 
-Asset
-	** Copy useful js, put together, rename
-Views
-	**ace_user/inc_asset.php
-	**ace_user/inc_full_asset.php
-	**- solve them later
-
-Email:
-	** if email not exists, dont tell user. just ignore and return success
-	** need a clear token function (filtered by organization)
-	** admin group can promote admin
-	** password format requirements - 8 characters
-	** ()[] syntax errors
-	
-Sanitize
-Local Email
-	
 ----------------------------
 How do I user the Ace CI User with my current project?
 

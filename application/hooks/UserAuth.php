@@ -37,7 +37,7 @@ class UserAuth {
 					
 		if(!$isAlreadyKickedOut && !$isPassAuth ){
 
-			$errorMessage = rawurlencode("No permission of " .$functionName);
+			$errorMessage = rawurlencode("No permission of ". $className. "-".$functionName);
 
 			if($this->CI->input->is_ajax_request())
 			{
