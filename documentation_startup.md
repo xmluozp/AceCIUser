@@ -136,7 +136,7 @@ The `Models/Users_model.php` file's `read_datatable()` function:
 
 View/users/page_index.php
 
-Find the <table> tag with id="list_users", add what column you want, have to match the column name from the Model. If its not matching, that <td> fileds will be blank.
+Find the `<table>` tag with id="list_users", add what column you want, have to match the column name from the Model. If its not matching, that `<td>` fileds will be blank.
 
 Those attributes start with "data-" are the annotation of columns, if you want to use the Datatables in your project, feel free to do so.
 
