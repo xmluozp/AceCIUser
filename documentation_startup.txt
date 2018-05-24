@@ -7,7 +7,7 @@ If you are using Scotch Box (https://box.scotch.io) you'll need to upgrade your 
 		sudo apt-get install mysql-server-5.6
 		exit
 
-Clone the ACECIUser project into your HTTP servers root folder:
+Clone the ACECIUser project into your HTTP server's root folder:
         If you are using ScotchBox you will want to:
 	        Delete the public folder within your Scotch Box folder
 		Use git or GitKraken to clone https://github.com/bitprojectspace/AceCIUser.git in the ScotchBox folder.
