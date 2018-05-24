@@ -1,62 +1,70 @@
-If you are using Scotch Box (https://box.scotch.io) you'll need to upgrade your version of MySQL. 
-        From the Windows command prompt within your Scotch Box folder:
-	        vagrant ssh
-		sudo apt-get update
-                sudo apt-get update
-                sudo apt-get upgrade
-		sudo apt-get install mysql-server-5.6
-		exit
+# AceCIUser - User Administration System
 
-Clone the ACECIUser project into your HTTP server's root folder:
-        If you are using ScotchBox you will want to:
-	        Delete the public folder within your Scotch Box folder
-		Use git or GitKraken to clone https://github.com/bitprojectspace/AceCIUser.git in the ScotchBox folder.
-		Rename the new clone AceCIUser folder to: public
+## Setting Up the AceCIUser System
 
-Pull in the required Composer dependencies:
-        Install Composer (https://getcomposer.org/) to Windows or to the ScotchBox VM.
-	At a command prompt from the project root folder (the "public" folder when using Scotch Box):
-	        composer require mailgun/mailgun-php php-http/guzzle6-adapter php-http/message
+1. If you are using Scotch Box (https://box.scotch.io) you'll need to upgrade your version of MySQL. 
+   * From the Windows command prompt within your Scotch Box folder:
+    
+          vagrant ssh
+          sudo apt-get update
+          sudo apt-get update
+          sudo apt-get upgrade
+          sudo apt-get install mysql-server-5.6
+          exit
 
-Set the base URL: (Every CodeIgniter project needs to set this.)
-	Config/config.php
-		Change to your base url (Where #.#.#.# is your development server's IP address or domain.)
-			$config['base_url'] = 'http://#.#.#.#/';
+2. Clone the ACECIUser project into your HTTP server's root folder:
+   * If you are using ScotchBox you will want to:
+     * Delete the public folder within your Scotch Box folder
+     * Use git or GitKraken to clone https://github.com/bitprojectspace/AceCIUser.git in the ScotchBox folder.
+     * Rename the new clone AceCIUser folder to `public`
+     * Remove the hidden `.git` folder in the `public` folder.
+
+3. Pull in the required Composer dependencies:
+   * Install Composer (https://getcomposer.org/) to Windows or to the ScotchBox VM.
+   * At a command prompt from the project root folder (the "public" folder when using Scotch Box):
+   
+         composer require mailgun/mailgun-php php-http/guzzle6-adapter php-http/message
+
+4. Set the base URL: (Every CodeIgniter project needs to set this.)
+   * Edit the `config/config.php` file:
+     * Change to your base url (Where #.#.#.# is your development server's IP address or domain.)
+     
+           $config['base_url'] = 'http://#.#.#.#/';
 			
-Setup the database:
-	Config/database.php
-		Database has to be set, for example:
-			'hostname' => 'localhost',
-			'username' => 'johnuser',
-			'password' => '123',
-			'database' => 'aceciuser'
+5. Setup the database and required tables:
+   * Edit the `config/database.php` to match your database server, for example:
+    
+         'hostname' => 'localhost',
+         'username' => 'root',
+         'password' => 'root',
+         'database' => 'aceciuser'
 
-	Ensure that you have a database in your database server with the same name as the one used in your config/database.php file:
-	        From your database SQL prompt (for example):
-		        CREATE database aceciuser;
+   * Ensure that you have a database in your database server with the same name as the one used in your config/database.php file:
+     * From your database SQL prompt (for example):
+     
+           CREATE database aceciuser;
 			
-	Open the page /aceciuser_setting.php
-		Hit the button, generate the tables
+   * In your browser open the page `/aceciuser_setting.php` page:
+     * Hit the button, generate the tables.
+     * Once you have verified that the required tables were create you should remove this `aceciuser_setting.php` script. (It can be retrieved from the project repo if you need it again.)
 
-Test the login:
-        Open the page index.php/users/view_login.php
-	        Default admin credentials are:
-		username: admin@rrc.none
-		password: rrc12345
+5. Test the login:
+   * Open the `index.php/users/view_login.php` page. The default admin credentials are:
+   
+         username: admin@rrc.none
+         password: rrc12345
 
-Update routes: (optional)
-		You can set the login page as the first page of your app.
-		For example, edit your config/routes.php
-		$route['default_controller'] = 'users/view_login';	
+6. Update the application routes: (optional)
+   * You can set the login page as the first page of your app. For example, edit your `config/routes.php` file:
+   
+         $route['default_controller'] = 'users/view_login';	
 
+7. Set the auto email service: (This doesn't need to be configured right away.)
+   * We are using Mailgun service:
+     * Talk to your client about getting a mailgun.com account.
+     * Set your mail service key in the `Helpers/User_email_helper.php` file.
 
-Set the auto email service: (This doesn't need to be configured right away.)
-	We are using Mailgun service:
-		See mailgun.com website
-		Set your mail service key
-			Helpers/User_email_helper.php
-
-Customize your user permissions	
+## Customizing User Permissions
 	
     Helpers/User_variables_helper.php
         Here to set your user permissions (permission to access controller functions)
@@ -71,9 +79,8 @@ Customize your user permissions
 				For example, $returnValue[] = array(VISITOR, "Users","*", ">=");
 	
 				Means anyone want to run any function in Users, has to be a VISITOR or higher(VISITOR here is 0 level, means everyone)
-	
-----------------------------	
-For additional
+
+## Additional Setup and Information
 
     About Captcha
         The constant LOGIN_ATTEMPTING_LIMIT is the login try times before the Captcha occurred. Right now is 2 just for testing purpose.
