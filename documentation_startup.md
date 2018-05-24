@@ -14,7 +14,8 @@
 
 2. Clone the ACECIUser project into your HTTP server's root folder:
    * If you are using ScotchBox you will want to:
-     * Delete the public folder within your Scotch Box folder
+   
+     * Delete the public folder within your Scotch Box folder.
      * Use git or GitKraken to clone https://github.com/bitprojectspace/AceCIUser.git in the ScotchBox folder.
      * Rename the newly cloned `AceCIUser` folder to `public`
      * Remove the hidden `.git` folder in the `public` folder.
@@ -61,6 +62,7 @@
 
 7. Set the auto email service: (This doesn't need to be configured right away.)
    * We are using Mailgun service:
+   
      * Talk to your client about getting a mailgun.com account.
      * Set your mail service key in the `Helpers/User_email_helper.php` file.
 
