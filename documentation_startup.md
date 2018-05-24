@@ -16,7 +16,7 @@
    * If you are using ScotchBox you will want to:
      * Delete the public folder within your Scotch Box folder
      * Use git or GitKraken to clone https://github.com/bitprojectspace/AceCIUser.git in the ScotchBox folder.
-     * Rename the new clone AceCIUser folder to `public`
+     * Rename the newly cloned `AceCIUser` folder to `public`
      * Remove the hidden `.git` folder in the `public` folder.
 
 3. Pull in the required Composer dependencies:
