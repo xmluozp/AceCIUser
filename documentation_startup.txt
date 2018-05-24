@@ -1,5 +1,5 @@
-If you are using Scotch Box (https://box.scotch.io):
-        Upgrade your version of MySQL. From the Windows command prompt within your Scotch Box folder:
+If you are using Scotch Box (https://box.scotch.io) you'll need to upgrade your version of MySQL. 
+        From the Windows command prompt within your Scotch Box folder:
 	        vagrant ssh
 		sudo apt-get update
                 sudo apt-get update
