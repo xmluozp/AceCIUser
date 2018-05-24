@@ -18,16 +18,10 @@ Pull in the required Composer dependencies:
 	At a command prompt from the project root folder (the "public" folder when using Scotch Box):
 	        composer require mailgun/mailgun-php php-http/guzzle6-adapter php-http/message
 
-Set the base URL: (ever codeigniter project needs to set that)
+Set the base URL: (Every CodeIgniter project needs to set this.)
 	Config/config.php
 		Change to your base url (Where #.#.#.# is your development server's IP address or domain.)
 			$config['base_url'] = 'http://#.#.#.#/';
-
-Set the auto email service: (This doesn't need to be configured right away.)
-	We are using Mailgun service:
-		See mailgun.com website
-		Set your mail service key
-			Helpers/User_email_helper.php
 			
 Setup the database:
 	Config/database.php
@@ -54,6 +48,13 @@ Update routes: (optional)
 		You can set the login page as the first page of your app.
 		For example, edit your config/routes.php
 		$route['default_controller'] = 'users/view_login';	
+
+
+Set the auto email service: (This doesn't need to be configured right away.)
+	We are using Mailgun service:
+		See mailgun.com website
+		Set your mail service key
+			Helpers/User_email_helper.php
 
 Customize your user permissions	
 	
