@@ -124,53 +124,62 @@ It's in
 ### Additional User Columns
 
 If you want additional columns for a user, and you want to keep the User Management page rather than use your own, then you need to modify MVC:
-M:
-    Models/Users_model.php
-	read_datatable()
-	    Change what columns should be read for the user list
-	    the extra search part will process the Advanced Search request from User List page
 
-V:
-	View/users/page_index.php
-		Find the <table> tag with id="list_users", add what column you want, have to match the column name from the Model. If its not matching, that <td> fileds will be blank.
+#### Model
 
-		Those attributes start with "data-" are the annotation of columns, if you want to use the Datatables in your project, feel free to do so.
-			*  data-source: --- name of the column you are looking for
-			*  data-orderby-desc
-			*  data-orderby-asc: --- if has this attribute, will be as default sorting
-			*  data-filter: --- what columns will be respond by the filter
-			*  data-icon: ---   if its an icon column. (the value=>icon settings are in create_datatable.js)
-			*  data-class: ---  change the column's classname
-			*  data-render: --- change content, need a render function code below. The render function arguments have to be like: fn(data, type, row, meta). The return value will be filled into the <td> tag
-			*  data-multiselect: --- set the column as multi checkbox column
-	View/users/form_modal_user.php
-		The divs userDetailModal and userCreateModal are the form of create or edit an user by the administrator.
-		If you add any item, please keep the attribute "data-validation", otherwise this item will not be submitted when you hit "save" button.
-		Those attributes start with "data-" are annotations.
-			*  data-not-retrive : will be keep empty when getting data
-			*  data-validation : will be validated when submitting data
-			*  data-render : Instead of fill-in, the system will call a function. The function format have to be like: fn(itemSelector, value)
+The `Models/Users_model.php` file's `read_datatable()` function:
+  
+* Change what columns should be read for the user list
+* The extra search part will process the Advanced Search request from User List page
 
-C:		
-	Controllers/Users.php
-		form_signup()
-			What information will be stored when user signup
-		ajax_create()
-			What information will be stored when the administrator create an user
-		ajax_update()
-			Columns of admin-update an user
+#### View
 
-	Becareful, In order to prevent anonymous requests, functions here are better been set (in the permission list). 
+View/users/page_index.php
+
+Find the <table> tag with id="list_users", add what column you want, have to match the column name from the Model. If its not matching, that <td> fileds will be blank.
+
+Those attributes start with "data-" are the annotation of columns, if you want to use the Datatables in your project, feel free to do so.
+
+*  data-source: --- name of the column you are looking for
+*  data-orderby-desc
+*  data-orderby-asc: --- if has this attribute, will be as default sorting
+*  data-filter: --- what columns will be respond by the filter
+*  data-icon: ---   if its an icon column. (the value=>icon settings are in create_datatable.js)
+*  data-class: ---  change the column's classname
+*  data-render: --- change content, need a render function code below. The render function arguments have to be like: fn(data, type, row, meta). The return value will be filled into the <td> tag
+*  data-multiselect: --- set the column as multi checkbox column
+View/users/form_modal_user.php
+The divs userDetailModal and userCreateModal are the form of create or edit an user by the administrator.
+If you add any item, please keep the attribute "data-validation", otherwise this item will not be submitted when you hit "save" button.
+Those attributes start with "data-" are annotations.
+*  data-not-retrive : will be keep empty when getting data
+*  data-validation : will be validated when submitting data
+*  data-render : Instead of fill-in, the system will call a function. The function format have to be like: fn(itemSelector, value)
+
+#### Controller	
+
+Controllers/Users.php
+
+form_signup()
+	What information will be stored when user signup
+ajax_create()
+	What information will be stored when the administrator create an user
+ajax_update()
+	Columns of admin-update an user
+
+Becareful, In order to prevent anonymous requests, functions here are better been set (in the permission list). 
 
 ### Additional User Groups / Roles
 
 If you need more user groups (roles), you need to change 3 places:
-	Database
-		insert a record to user_groups
-		change your admin account's user groups(if you changed the group id of admin user)
-	Config/constants.php
 
-	Helpers/User_variables_helper.php
-		Give the new role a customized navigation bar
+Database
+	insert a record to user_groups
+	change your admin account's user groups(if you changed the group id of admin user)
 
-	---- but do not delete the Visitor group, it will be used for the "level = 0" situation.
+Config/constants.php
+
+Helpers/User_variables_helper.php
+	Give the new role a customized navigation bar
+
+---- but do not delete the Visitor group, it will be used for the "level = 0" situation.
