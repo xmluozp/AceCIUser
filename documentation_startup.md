@@ -21,7 +21,7 @@
      * Remove the hidden `.git` folder in the `public` folder.
 
 3. Pull in the required Composer dependencies:
-   * Install Composer (https://getcomposer.org/) to Windows or to the ScotchBox VM.
+   * Install Composer (https://getcomposer.org/) to Windows. (Composer will already be install on your Scotch Box VM if you're comfortable using the Linux command prompt after ssh'ing into the VM.)
    * At a command prompt from the project root folder (the "public" folder when using Scotch Box):
    
          composer require mailgun/mailgun-php php-http/guzzle6-adapter php-http/message
