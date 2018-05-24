@@ -60,7 +60,7 @@
    
          $route['default_controller'] = 'users/view_login';	
 
-7. Set the auto email service: (This doesn't need to be configured right away.)
+7. Set the auto email service: (This doesn't need to be configured right away, but is required if you wish to allow users to reset their passwords, or to allow admins to email new users with their login credentials.)
    * We are using Mailgun service:
    
      * Talk to your client about getting a mailgun.com account.
