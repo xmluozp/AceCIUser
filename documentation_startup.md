@@ -170,7 +170,7 @@ If you need more user groups (roles), you need to change 3 places:
 
 * Database
   * insert a record to user_groups
-  * change your admin account's user groups(if you changed the group id of admin user)
+  * change your admin account's user groups (if you changed the group id of admin user)
 
 * `Config/constants.php`
 
