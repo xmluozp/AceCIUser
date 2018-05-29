@@ -107,19 +107,17 @@ There are some other picture generate settings in Captcha.php
 ### Navigation Bar
 
 You can customize your navigation bar for different user groups. (if you don't have your own navigation bar)
-It's in
-    Helpers/User_variables_helper.php
-	variables_get_navigation()
-	    Set the full navigation bar
-	variables_get_navigation_permissions()
-	    Set the different user group's navigation bar
+
+It's in the `Helpers/User_variables_helper.php` functions:
+
+* `variables_get_navigation()` - Set the full navigation bar
+* `variables_get_navigation_permissions()` - Set the different user group's navigation bar
 
 ### Email Notifications
 
-You can set what should be put in the email notification
-It's in
-    Helpers/User_variables_helper.php
-	variables_emails()
+You can set what should be put in the email notification.
+
+It's in the `Helpers/User_variables_helper.php` function called `variables_emails()`.
 
 ### Additional User Columns
 
@@ -158,14 +156,11 @@ Those attributes start with "data-" are annotations.
 
 #### Controller	
 
-Controllers/Users.php
+`Controllers/Users.php`:
 
-form_signup()
-	What information will be stored when user signup
-ajax_create()
-	What information will be stored when the administrator create an user
-ajax_update()
-	Columns of admin-update an user
+* `form_signup()` - What information will be stored when user signup
+* `ajax_create()` - What information will be stored when the administrator create an user
+* `ajax_update()` - Columns of admin-update an user
 
 Becareful, In order to prevent anonymous requests, functions here are better been set (in the permission list). 
 
@@ -173,13 +168,13 @@ Becareful, In order to prevent anonymous requests, functions here are better bee
 
 If you need more user groups (roles), you need to change 3 places:
 
-Database
-	insert a record to user_groups
-	change your admin account's user groups(if you changed the group id of admin user)
+* Database
+  * insert a record to user_groups
+  * change your admin account's user groups(if you changed the group id of admin user)
 
-Config/constants.php
+* `Config/constants.php`
 
-Helpers/User_variables_helper.php
-	Give the new role a customized navigation bar
+* `Helpers/User_variables_helper.php`
+  * Give the new role a customized navigation bar
 
 ---- but do not delete the Visitor group, it will be used for the "level = 0" situation.
