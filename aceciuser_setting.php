@@ -25,24 +25,26 @@ if($_POST)
 	$role_table = trim(filter_input(INPUT_POST, 'role_table'));
 	$org_table = trim(filter_input(INPUT_POST, 'org_table'));
 	$token_table = trim(filter_input(INPUT_POST, 'token_table'));
-	
 
-	define('DB_DSN','mysql:host=' . $hostname. ';dbname='. $databasename);
-	define('DB_USER',$username);
-	define('DB_PASS',$password);  
-	
-	try {
-		$db = new PDO(DB_DSN, DB_USER, DB_PASS);
-	} catch (PDOException $e) {
-		print "Error: " . $e->getMessage();
-		die();
-	}
-	
+
+    define('DB_DSN','mysql:host=' . $hostname. ';dbname='. $databasename.';charset=utf8');
+    define('DB_USER',$username);
+    define('DB_PASS',$password);
+
+    try {
+        $db = new PDO(DB_DSN, DB_USER, DB_PASS,array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
+    } catch (PDOException $e) {
+        print "Error: " . $e->getMessage();
+        die();
+    }
+
 	$query = "DROP TABLE IF EXISTS ".$token_table. ";";
 	$query .= "DROP TABLE IF EXISTS ".$user_table .";";
 	$query .= "DROP TABLE IF EXISTS ".$role_table. ";";
 	$query .= "DROP TABLE IF EXISTS ".$org_table. ";";
-	
+
+    $query .= "ALTER DATABASE " . $databasename . " CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+
 	
 	$statement = $db->prepare($query);
 	$statement->execute();			
