@@ -38,10 +38,10 @@ if($_POST)
 		die();
 	}
 	
-	$query = "DROP TABLE ".$token_table. ";";
-	$query .= "DROP TABLE ".$user_table .";";
-	$query .= "DROP TABLE ".$role_table. ";";
-	$query .= "DROP TABLE ".$org_table. ";";
+	$query = "DROP TABLE IF EXISTS ".$token_table. ";";
+	$query .= "DROP TABLE IF EXISTS ".$user_table .";";
+	$query .= "DROP TABLE IF EXISTS ".$role_table. ";";
+	$query .= "DROP TABLE IF EXISTS ".$org_table. ";";
 	
 	
 	$statement = $db->prepare($query);
