@@ -93,18 +93,21 @@ function variables_get_navigation(){
 		"Target"		=>	"users/view_home");
 
 	// -----------------------------users
+    $subitems = Array(); // initialize a subitem list
 
+    // sub menu items
 	$subitems[] = array(
 		"FunctionCode"	=>	"usr01"	,
 		"Name"			=>	"User Accounts",
-		"Target"		=>	"users");  
-		
+		"Target"		=>	"users");
+
 	$subitems[] = array(
 		"FunctionCode"	=>	"usr02"	,
 		"Name"			=>	"Junk Records",
 		"Target"		=>	"users/view_junks",
 		"Divider"		=> 	true); // Divider is the line between this item and the item above
 
+    // top menu
 	$returnValue[] = array(
 		"FunctionCode"	=>	"usr",
 		"Name"			=>	"Users",

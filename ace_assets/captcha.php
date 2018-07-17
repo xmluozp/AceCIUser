@@ -76,6 +76,7 @@ class SimpleCaptcha {
      * directory to another location outise the web server
      *
      */
+
     public $resourcesPath = 'resources';
 
     /** Min word length (for non-dictionary random text generation) */
@@ -318,7 +319,7 @@ class SimpleCaptcha {
         if (substr($this->wordsFile, 0, 1) == '/') {
             $wordsfile = $this->wordsFile;
         } else {
-            $wordsfile = $this->resourcesPath.'/'.$this->wordsFile;
+            $wordsfile = __DIR__. '/' . $this->resourcesPath.'/'.$this->wordsFile;
         }
 
         if (!file_exists($wordsfile)) {
@@ -389,7 +390,7 @@ class SimpleCaptcha {
         }
 
         // Full path of font file
-        $fontfile = $this->resourcesPath.'/fonts/'.$fontcfg['font'];
+        $fontfile = __DIR__. '/' . $this->resourcesPath.'/fonts/'.$fontcfg['font'];
 
 
         /** Increase font-size for shortest words: 9% for each glyp missing */
