@@ -2,7 +2,7 @@
 
 An authentication and authorization system for CodeIgniter-based projects.
 
-Please see the [documentation_startup.md](https://github.com/bitprojectspace/AceCIUser/blob/master/documentation_startup.md) for setup instructions.
+Please see the [documentation_startup.md](https://github.com/bitprojectspace/AceCIUser/master/documentation_startup.md) for setup instructions.
   
  	
 ## And Remember, Security is Important
